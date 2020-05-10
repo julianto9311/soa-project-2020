@@ -1,0 +1,1294 @@
+{
+	"info": {
+		"_postman_id": "4a46c521-13b2-4e88-91b6-823de07977c0",
+		"name": "Proyek_Soa",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "217116585",
+			"item": [
+				{
+					"name": "Cari POI terkenal di suatu kota",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "da7b3ba1-2ed1-45e9-89f0-770a548b7f58",
+								"exec": [
+									"pm.test(\"Status code 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Pencarian Kosong\", function () {",
+									"    var jsonData = pm.response.json();",
+									"     pm.expect(jsonData).to.eql([]);",
+									"});",
+									"pm.test(\"Pencarian Berhasil\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var hasil = ([",
+									"        {",
+									"            \"nama\": \"JW Marriott Hotel Surabaya\",",
+									"            \"deskripsi\": \"The design of each room uses luxurious European style. The restaurant at the hotel serves Chinese, Japanese, and International dishes.\"",
+									"        },",
+									"        {",
+									"            \"nama\": \"Hotel Majapahit\",",
+									"            \"deskripsi\": \"Opulent colonial-era boutique hotel.\"",
+									"        },",
+									"        {",
+									"            \"nama\": \"Suramadu Bridge\",",
+									"            \"deskripsi\": \"The Suramadu Bridge (Indonesian.\"",
+									"        },",
+									"        {",
+									"            \"nama\": \"Sanggar Agung\",",
+									"            \"deskripsi\": \"Sanggar Agung Temple or Hong San Tang is a Chinese temple in Surabaya dedicated to Chinese deities and other Asian religious icons.\"",
+									"        },",
+									"        {",
+									"            \"nama\": \"Sheraton Surabaya Hotel & Towers\",",
+									"            \"deskripsi\": \"Nestled in the heart of Surabaya, the Sheraton Surabaya Hotel & Towers is a great place to conduct business, catch up with friends and family, and also perfect for city getaway.\"",
+									"        },",
+									"        {",
+									"            \"nama\": \"House of Sampoerna\",",
+									"            \"deskripsi\": \"Situated in \\\"old Surabaya\\\"‚ this stately Dutch colonial-style compound was built in 1862 and is now a preserved historical site.\"",
+									"        },",
+									"        {",
+									"            \"nama\": \"Heroes Monument\",",
+									"            \"deskripsi\": \"A monument dedicated to the fallen heroes of Surabaya during the Independence war of 1945-49.\"",
+									"        },",
+									"        {",
+									"            \"nama\": \"Al-Akbar Mosque\",",
+									"            \"deskripsi\": \"A huge mosque which some say is the biggest mosque in South East Asia, The mosque has a tower which is equipped with an elevator, so that visitors can see Surabaya from top of the tower, 65m (195ft) above ground level.\"",
+									"        },",
+									"        {",
+									"            \"nama\": \"Surabaya Zoo\",",
+									"            \"deskripsi\": \"Surabaya Zoo (Indonesian Kebon Binatang Surabaya or KBS), also known as Bonbin (abbreviation of Kebon Binatang, Indonesian for \\\"zoo\\\"), is a 37acre zoo located in the city of Surabaya in East Java, Indonesia.\"",
+									"        },",
+									"        {",
+									"            \"nama\": \"Citilites Skyclub & Bistro\",",
+									"            \"deskripsi\": \"On the 21st floor with a good view of the city lights. Regional and international beverages, snacks and pastries. Cozy and stylish.\"",
+									"        }",
+									"    ])",
+									"    pm.expect(jsonData).to.eql(hasil);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/217116585/poi_terkenal?lokasi=Surabaya",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116585",
+								"poi_terkenal"
+							],
+							"query": [
+								{
+									"key": "lokasi",
+									"value": "Surabaya"
+								}
+							]
+						},
+						"description": "contohnya pakai kota surabaya"
+					},
+					"response": []
+				},
+				{
+					"name": "Lokasti terkenal di kota",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "08cce794-114c-45bd-bb3c-21b6de68c917",
+								"exec": [
+									"pm.test(\"Status code 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Pencarian Kosong\", function () {",
+									"    var jsonData = pm.response.json();",
+									"     pm.expect(jsonData).to.eql([]);",
+									"});",
+									"pm.test(\"Pencarian Berhasil\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var hasil = ([",
+									"    {",
+									"        \"nama\": \"Hi Tech Mall\",",
+									"        \"deksripsi\": \"Hi Tech Mall is a shopping centre in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Suramadu National Bridge\",",
+									"        \"deksripsi\": \"Suramadu National Bridge is a bridge in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Taman Remaja Surabaya\",",
+									"        \"deksripsi\": \"Taman Remaja Surabaya is a park in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Taman Mundu\",",
+									"        \"deksripsi\": \"Taman Mundu is a park in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Ahimsa Restaurant\",",
+									"        \"deksripsi\": \"Best known vegetarian restaurant in stylish decor. Pan Asian, Chinese and Indonesian cuisine.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Aiola Eatery\",",
+									"        \"deksripsi\": \"Delicious waffles, traditional food and good wonton on the menu.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Eatorland cafe and resto\",",
+									"        \"deksripsi\": \"Has live music.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"The Life Hotel Surabaya\",",
+									"        \"deksripsi\": \"Welcome to the Facebook page of The Life Hotel Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"AW Wijaya Kusuma\",",
+									"        \"deksripsi\": \"AW Wijaya Kusuma is a restaurant in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Taman Paliatif\",",
+									"        \"deksripsi\": \"Taman Paliatif is a park in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Six and Eat\",",
+									"        \"deksripsi\": \"Good food.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Taman Teratai Surabaya\",",
+									"        \"deksripsi\": \"Taman Teratai Surabaya is a park in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Gelora 10 November Stadium\",",
+									"        \"deksripsi\": \"Gelora 10 November Stadium (Indonesian.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Mie Pitik\",",
+									"        \"deksripsi\": \"Mie Pitik is a restaurant in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Twin Hotel\",",
+									"        \"deksripsi\": \"Twin Hotel is a hotel in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Tahu Campur Lamongan Pak Mat Andri\",",
+									"        \"deksripsi\": \"Tahu Campur Lamongan Pak Mat Andri is a restaurant in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Pos Polisi Tambakrejo\",",
+									"        \"deksripsi\": \"Pos Polisi Tambakrejo is a police station in Surabaya.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Kepolisian Sektor Genteng\",",
+									"        \"deksripsi\": \"Kepolisian Sektor Genteng is a police station on Jalan Ambengan.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"POLSEK TAMBAK SARI\",",
+									"        \"deksripsi\": \"POLSEK TAMBAK SARI is a police station on JALAN MENDUT.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Bank Panin\",",
+									"        \"deksripsi\": \"Branch of bank panin.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Amar Bank\",",
+									"        \"deksripsi\": \"Branch of amar bank.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Bank Panin\",",
+									"        \"deksripsi\": \"Branch of bank panin.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"Bank Danamon\",",
+									"        \"deksripsi\": \"Branch of bank danamon.\"",
+									"    },",
+									"    {",
+									"        \"nama\": \"BRI Kusuma Bangsa\",",
+									"        \"deksripsi\": \"Branch of bri kusuma bangsa, a bank.\"",
+									"    }",
+									"])",
+									"    pm.expect(jsonData).to.eql(hasil);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/217116585/lokasi_terkenal?lokasi=surabaya",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116585",
+								"lokasi_terkenal"
+							],
+							"query": [
+								{
+									"key": "lokasi",
+									"value": "surabaya"
+								}
+							]
+						},
+						"description": "Contohnya di kota surabaya"
+					},
+					"response": []
+				},
+				{
+					"name": "Planning ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f0ae5e0a-acf2-486a-b572-8f02bf146c73",
+								"exec": [
+									"pm.test(\"Status code 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Pencarian Berhasil\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var hasil = ([",
+									"    {",
+									"        \"tanggal\": \"2020-06-12\",",
+									"        \"isi\": [",
+									"            {",
+									"                \"kegiatan\": \"morning plan\",",
+									"                \"nama\": \"Tokyo Imperial Palace\",",
+									"                \"deskripsi\": \"Tokyo Imperial Palace is on the list, so let's head over there now. Surrounded by a series of moats and high walls, the site of the former Edo Castle has been the official residence of the Japanese imperial family since 1868.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"lunch\",",
+									"                \"nama\": \"Sushi Daiwa\",",
+									"                \"deskripsi\": \"You're halfway through the day, time to get some good food. Sushi Daiwa is a good spot in this part of town. The larger of the two, so the queue moves faster. The standard omakase course is ¥3500 (7 pieces & 1 roll), and a cheaper ¥2100 version also available.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"afternoon plan\",",
+									"                \"nama\": \"Tsukiji Fish Market\",",
+									"                \"deskripsi\": \"Tsukiji Fish Market is on the list, so let's head over there now. For more than 80 years, Tsukiji was the world's largest wholesale fish market.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"\",",
+									"                \"nama\": \"Namiyoke Inari Shrine\",",
+									"                \"deskripsi\": \"The name of the shrine literally means \\\"protection from waves.\\\" After the Tsukiji fish market was established in its present location after the 1923 Great Kantō earthquake, the Namiyoke Inari Shrine became an unofficial guardian shrine for the marketplace and its traders.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"coffee\",",
+									"                \"nama\": \"Yonemoto Coffee\",",
+									"                \"deskripsi\": \"You might want to have a bit of a break and go for coffee. Yonemoto Coffee is close by. Great food, really nice ice cream and good coffee.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"dinner\",",
+									"                \"nama\": \"Sushi Dai\",",
+									"                \"deskripsi\": \"All that walking probably made you hungry, so let's find a place to have dinner. Sushi Dai is our pick for tonight. ¥3900 for day's set (10 pieces & 1 roll), of which you get to choose the last piece. They also have a cheaper ¥2500 version.\"",
+									"            }",
+									"        ]",
+									"    },",
+									"    {",
+									"        \"tanggal\": \"2020-06-13\",",
+									"        \"isi\": [",
+									"            {",
+									"                \"kegiatan\": \"breakfast\",",
+									"                \"nama\": \"Ichiran\",",
+									"                \"deskripsi\": \"In the same area as your location, you'll find Ichiran is a good place for breakfast. Good dining area and little seating area.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"morning plan\",",
+									"                \"nama\": \"Tokyo National Museum\",",
+									"                \"deskripsi\": \"Tokyo National Museum is on the list, so let's head over there now. JR lines to Ueno, Ueno-kōen exit.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"lunch\",",
+									"                \"nama\": \"Afuri\",",
+									"                \"deskripsi\": \"You're halfway through the day, time to get some good food. Afuri is a good spot in this part of town. Simple soup, juicy meat and cold food on the menu in this chinese restaurant.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"afternoon plan\",",
+									"                \"nama\": \"Meiji Shrine\",",
+									"                \"deskripsi\": \"Meiji Shrine is on the list, so let's head over there now. Built in commemoration of Emperor Meiji in 1920, is Tokyo's grandest shrine.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"\",",
+									"                \"nama\": \"Meiji Shrine Inner Garden\",",
+									"                \"deskripsi\": \"The Meiji Shrine Inner Garden or Yoyogi Gyoen is a public garden adjacent to Meiji Shrine and Yoyogi Park in Shibuya, Tokyo.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"coffee\",",
+									"                \"nama\": \"DOUTOR\",",
+									"                \"deskripsi\": \"You might want to have a bit of a break and go for coffee. DOUTOR is close by. Warm sandwiches, seasonal desserts and hot chocolate mousse on the menu.\"",
+									"            },",
+									"            {",
+									"                \"kegiatan\": \"dinner\",",
+									"                \"nama\": \"Kyushu Jangara\",",
+									"                \"deskripsi\": \"All that walking probably made you hungry, so let's find a place to have dinner. Kyushu Jangara is our pick for tonight. One of the best-known tonkotsu ramen shops in Tokyo, where you can choose between five degrees of noodle thickness, three levels of soup texture, and three levels of soup fattiness.\"",
+									"            }",
+									"        ]",
+									"    }",
+									"]);",
+									"",
+									"    pm.expect(jsonData).to.eql(hasil);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/217116585/planner?lokasi=Tokyo&mulai=2020-06-12&selesai=2020-06-13",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116585",
+								"planner"
+							],
+							"query": [
+								{
+									"key": "lokasi",
+									"value": "Tokyo"
+								},
+								{
+									"key": "mulai",
+									"value": "2020-06-12"
+								},
+								{
+									"key": "selesai",
+									"value": "2020-06-13"
+								}
+							]
+						},
+						"description": "Planning contoh pakai tokyo"
+					},
+					"response": []
+				},
+				{
+					"name": "Mencari aktifitas terkenal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1151109e-5166-424b-abff-39939b86c3d5",
+								"exec": [
+									"pm.test(\"Status code 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Pencarian Berhasil\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var hasil = ([",
+									"    {",
+									"        \"aktifitas\": \"sightseeing\",",
+									"        \"jumlah\": 2516",
+									"    },",
+									"    {",
+									"        \"aktifitas\": \"eatingout\",",
+									"        \"jumlah\": 1447",
+									"    },",
+									"    {",
+									"        \"aktifitas\": \"nightlife\",",
+									"        \"jumlah\": 363",
+									"    },",
+									"    {",
+									"        \"aktifitas\": \"shopping\",",
+									"        \"jumlah\": 73",
+									"    }",
+									"]);",
+									"    pm.expect(jsonData).to.eql(hasil);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/217116585/aktifitas_terkenal?lokasi=Osaka",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116585",
+								"aktifitas_terkenal"
+							],
+							"query": [
+								{
+									"key": "lokasi",
+									"value": "Osaka"
+								}
+							]
+						},
+						"description": "aktifitas terkenal di kota contohnya Osaka"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "217116589",
+			"item": [
+				{
+					"name": "Pengecekan Register Berhasil",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "12f066c9-be4f-434c-9568-d838ec6a722e",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Register Berhasil\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.eql({",
+									"        \"message\": \"berhasil register\"",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e3bd5b2a-f873-40b4-bbae-0d357839909a",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "edwin@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "edwin",
+									"type": "text"
+								},
+								{
+									"key": "nama_lengkap",
+									"value": "edwin sidharta",
+									"type": "text"
+								},
+								{
+									"key": "nomor_hp",
+									"value": "08123123123",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/217116589/register",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116589",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pengecekan Register Gagal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c9933abf-c205-49ce-8ca9-46dcd615a31b",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Register Gagal\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.eql({",
+									"        \"message\": \"data ada yang kosong\"",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "edwin@gmail.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "edwin",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "nama_lengkap",
+									"value": "edwin sidharta",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "nomor_hp",
+									"value": "08123123123",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "123",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/217116589/register",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116589",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pengecekan Login Admin",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "39cb691a-0dc6-4afa-b7b2-b36d4f2dbdb7",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "90a02a39-f29c-4284-8dfb-56c762083396",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"let token=pm.globals.get(\"jwtToken\");",
+									"pm.test(\"Cek masuk sebagai admin\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.eql({",
+									"          \"message\" : \"berhasil masuk sebagai admin\"",
+									"      });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/217116589/login",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116589",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pengcekan Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a965338a-1037-4285-bab8-01b3df9200f2",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"let token=pm.globals.get(\"jwtToken\");",
+									"pm.test(\"Cek masuk sebagai user\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.eql({",
+									"        \"message\": \"berhasil masuk user\"",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "edwin@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/217116589/login",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116589",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pengecekan edit user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "75513477-f624-4aac-96d2-26f90621eba5",
+								"exec": [
+									"let queue = pm.environment.get(\"edit_user\");\r",
+									"\r",
+									"if(!queue || queue.length <= 0){}\r",
+									"else{\r",
+									"    postman.setNextRequest(\"Pengecekan edit user\");\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Status code is correct\", function () {\r",
+									"    pm.response.to.have.status(pm.environment.get(\"edit_user_status_code\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(pm.environment.get(\"nama_test\"), function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.eql(pm.environment.get(\"edit_user_body\"));\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ed802eb8-9825-4e8e-8db2-102e6ac5e54c",
+								"exec": [
+									"//PRESCRIPT\r",
+									"let queue = pm.environment.get(\"edit_user\");\r",
+									"\r",
+									"if(!queue || queue.length <=0){\r",
+									"    queue = [\r",
+									"        {\r",
+									"            \"edit_user_username\" : \"edwin\",\r",
+									"            \"edit_user_nama_lengkap\" : \"edwin sidharta\",\r",
+									"            \"edit_user_nomor\" : \"08123123123\",\r",
+									"            \"edit_user_password\" : \"123\",\r",
+									"            \"edit_user_status_code\" : 200,\r",
+									"            \"edit_user_body\" : {\r",
+									"                \"message\":\"berhasil edit user\"\r",
+									"            },\r",
+									"            \"nama_test\":\"cek berhasil\"\r",
+									"        },\r",
+									"        {\r",
+									"            \"edit_user_username\" : \"\",\r",
+									"            \"edit_user_nama_lengkap\" : \"\",\r",
+									"            \"edit_user_nomor\" : \"\",\r",
+									"            \"edit_user_password\" : \"\",\r",
+									"            \"edit_user_status_code\" : 400,\r",
+									"            \"edit_user_body\" : {\r",
+									"                \"message\":\"data ada yang kosong\"\r",
+									"            },\r",
+									"            \"nama_test\":\"cek data kosong\"\r",
+									"        }\r",
+									"    ];\r",
+									"}\r",
+									"\r",
+									"let currentData = queue.shift();\r",
+									"pm.environment.set(\"edit_user_username\", currentData[\"edit_user_username\"]);\r",
+									"pm.environment.set(\"edit_user_nama_lengkap\", currentData[\"edit_user_nama_lengkap\"]);\r",
+									"pm.environment.set(\"edit_user_nomor\", currentData[\"edit_user_nomor\"]);\r",
+									"pm.environment.set(\"edit_user_password\", currentData[\"edit_user_password\"]);\r",
+									"pm.environment.set(\"edit_user_status_code\", currentData[\"edit_user_status_code\"]);\r",
+									"pm.environment.set(\"edit_user_body\", currentData[\"edit_user_body\"]);\r",
+									"pm.environment.set(\"nama_test\", currentData[\"nama_test\"]);\r",
+									"pm.environment.set(\"edit_user\", queue);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "{{edit_user_username}}",
+									"type": "text"
+								},
+								{
+									"key": "nama_lengkap",
+									"value": "{{edit_user_nama_lengkap}}",
+									"type": "text"
+								},
+								{
+									"key": "nomor_hp",
+									"value": "{{edit_user_nomor}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{edit_user_password}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/217116589/edit_user",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116589",
+								"edit_user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pengecekan mencari kota terkenal dari suatu negara",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "190c1446-b86e-4627-b424-299031a22fe1",
+								"exec": [
+									"//PRESCRIPT\r",
+									"let queue = pm.environment.get(\"cari_kota_terkenal\");\r",
+									"\r",
+									"if(!queue || queue.length <=0){\r",
+									"    queue = [\r",
+									"        {\r",
+									"            \"cek_kota_api_key\" : \"owymkzfrhejlzq2psl0k0otvyvrczhyi\",\r",
+									"            \"cek_kota_id_akun\" : \"LNPHPM5C\",\r",
+									"            \"cek_kota_negara\" : \"France\",\r",
+									"            \"cek_kota_dicari\" : \"par\",\r",
+									"            \"cek_kota_status_code\" : 200,\r",
+									"            \"cek_kota_body\" : [\r",
+									"                {\r",
+									"                    \"id\": \"Paris\",\r",
+									"                    \"name\": \"Paris\",\r",
+									"                    \"Penjelasan\": \"The \\\"City of Light\\\" and one of the most visited places on Earth: romance, cuisine, the Eiffel Tower and a surprising amount of green await you.\"\r",
+									"                }\r",
+									"            ],\r",
+									"            \"nama_test\":\"cek kota terkenal\"\r",
+									"        },\r",
+									"        {\r",
+									"            \"cek_kota_api_key\" : \"owymkzfrhejlzq2psl0k0otvyvrczhyi\",\r",
+									"            \"cek_kota_id_akun\" : \"LNPHPM5C\",\r",
+									"            \"cek_kota_negara\" : \"France\",\r",
+									"            \"cek_kota_dicari\" : \"bali\",\r",
+									"            \"cek_kota_status_code\" : 404,\r",
+									"            \"cek_kota_body\" : {\r",
+									"                \"message\": \"kota tidak ditemukan\"\r",
+									"            },\r",
+									"            \"nama_test\":\"cek kota tidak ditemukan\"\r",
+									"        }\r",
+									"    ];\r",
+									"}\r",
+									"\r",
+									"let currentData = queue.shift();\r",
+									"pm.environment.set(\"cek_kota_api_key\", currentData[\"cek_kota_api_key\"]);\r",
+									"pm.environment.set(\"cek_kota_id_akun\", currentData[\"cek_kota_id_akun\"]);\r",
+									"pm.environment.set(\"cek_kota_negara\", currentData[\"cek_kota_negara\"]);\r",
+									"pm.environment.set(\"cek_kota_dicari\", currentData[\"cek_kota_dicari\"]);\r",
+									"pm.environment.set(\"cek_kota_status_code\", currentData[\"cek_kota_status_code\"]);\r",
+									"pm.environment.set(\"cek_kota_body\", currentData[\"cek_kota_body\"]);\r",
+									"pm.environment.set(\"nama_test\", currentData[\"nama_test\"]);\r",
+									"pm.environment.set(\"cari_kota_terkenal\", queue);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "792fe95e-2562-407f-bca4-8a5cd9d07a0c",
+								"exec": [
+									"let queue = pm.environment.get(\"cari_kota_terkenal\");\r",
+									"\r",
+									"if(!queue || queue.length <= 0){}\r",
+									"else{\r",
+									"    postman.setNextRequest(\"Pengecekan mencari kota terkenal dari suatu negara\");\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Status code is correct\", function () {\r",
+									"    pm.response.to.have.status(pm.environment.get(\"cek_kota_status_code\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(pm.environment.get(\"nama_test\"), function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.eql(pm.environment.get(\"cek_kota_body\"));\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/217116589/get_Top_city_in_country?api_key={{cek_kota_api_key}}&id_akun={{cek_kota_id_akun}}&negara={{cek_kota_negara}}&dicari={{cek_kota_dicari}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116589",
+								"get_Top_city_in_country"
+							],
+							"query": [
+								{
+									"key": "api_key",
+									"value": "{{cek_kota_api_key}}"
+								},
+								{
+									"key": "id_akun",
+									"value": "{{cek_kota_id_akun}}"
+								},
+								{
+									"key": "negara",
+									"value": "{{cek_kota_negara}}"
+								},
+								{
+									"key": "dicari",
+									"value": "{{cek_kota_dicari}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "217116590",
+			"item": [],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "217116595",
+			"item": [
+				{
+					"name": "Get Restaurant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6c6612d6-f555-4e1c-84ad-a66a4c9514e7",
+								"exec": [
+									"// pm.test(\"Status code is 200\", function () {",
+									"//     pm.response.to.have.status(200);",
+									"// });",
+									"",
+									"// const schema = {",
+									"//   \"id\": \"string\",",
+									"//   \"name\": \"string\"",
+									"// };",
+									"",
+									"// pm.test('Schema is valid', function() {",
+									"//   pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+									"// });",
+									"",
+									"// tests[\"responnya lebih dr 0\"] = pm.response.json().length > 0;",
+									"",
+									"let queue = pm.environment.get(\"get_restaurant\");",
+									"",
+									"if(!queue || queue.length <= 0){",
+									"    postman.setNextRequest(\"Get Place\");",
+									"}",
+									"else{",
+									"    postman.setNextRequest(\"Get Restaurant\");",
+									"}",
+									"",
+									"pm.test(\"Status code is correct\", function () {",
+									"    pm.response.to.have.status(pm.environment.get(\"get_restaurant_status_code\"));",
+									"});",
+									"",
+									"pm.test(\"Data is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.eql(pm.environment.get(\"get_restaurant_body\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8e47ac5e-ee38-4608-95b2-b6ce888e6d02",
+								"exec": [
+									"let queue = pm.environment.get(\"get_restaurant\");",
+									"",
+									"if(!queue || queue.length <=0){",
+									"    queue = [",
+									"        {",
+									"            \"get_restaurant_country\" : \"Berlin\",",
+									"            \"get_restaurant_jumlah\" : \"1\",",
+									"            \"get_restaurant_status_code\" : 200,",
+									"            \"get_restaurant_body\" : {",
+									"                \"id\": \"N__429735547\",",
+									"                \"name\": \"Clärchens Ballhaus\"",
+									"            }",
+									"        },",
+									"        {",
+									"            \"get_restaurant_country\" : \"kosong\",",
+									"            \"get_restaurant_jumlah\" : \"1\",",
+									"            \"get_restaurant_status_code\" : 400,",
+									"            \"get_restaurant_body\" : {",
+									"                \"msg\": \"Restaurant dengan negara kosong tidak ditemukan :(\"",
+									"            }",
+									"        },",
+									"        {",
+									"            \"get_restaurant_country\" : \"Berlin\",",
+									"            \"get_restaurant_jumlah\" : \"0\",",
+									"            \"get_restaurant_status_code\" : 404,",
+									"            \"get_restaurant_body\" : {",
+									"                \"msg\": \"Tidak akan keluar response kalau jumlah 0\"",
+									"            }",
+									"        }",
+									"    ];",
+									"}",
+									"",
+									"let currentData = queue.shift();",
+									"pm.environment.set(\"get_restaurant_country\", currentData[\"get_restaurant_country\"]);",
+									"pm.environment.set(\"get_restaurant_jumlah\", currentData[\"get_restaurant_jumlah\"]);",
+									"pm.environment.set(\"get_restaurant_status_code\", currentData[\"get_restaurant_status_code\"]);",
+									"pm.environment.set(\"get_restaurant_body\", currentData[\"get_restaurant_body\"]);",
+									"pm.environment.set(\"get_restaurant\", queue);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "localhost:3000/217116595/api/getRestaurant/{{get_restaurant_country}}/{{get_restaurant_jumlah}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116595",
+								"api",
+								"getRestaurant",
+								"{{get_restaurant_country}}",
+								"{{get_restaurant_jumlah}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Place",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5b8b797e-17aa-4e8b-a651-ff93da539fec",
+								"exec": [
+									"let queue = pm.environment.get(\"get_place\");",
+									"",
+									"if(!queue || queue.length <=0){",
+									"    queue = [",
+									"        {",
+									"            \"get_place_country\" : \"Amsterdam\",",
+									"            \"get_place_jumlah\" : \"1\",",
+									"            \"get_place_status_code\" : 200,",
+									"            \"get_place_body\" : {",
+									"                \"id\": \"T__b98be764da47\",",
+									"                \"name\": \"Ramen-Ya\"",
+									"            }",
+									"        },",
+									"        {",
+									"            \"get_place_country\" : \"kosong\",",
+									"            \"get_place_jumlah\" : \"1\",",
+									"            \"get_place_status_code\" : 400,",
+									"            \"get_place_body\" : {",
+									"                \"msg\": \"Tempat dengan negara kosong tidak ditemukan :(\"",
+									"            }",
+									"        },",
+									"        {",
+									"            \"get_place_country\" : \"Amsterdam\",",
+									"            \"get_place_jumlah\" : \"0\",",
+									"            \"get_place_status_code\" : 404,",
+									"            \"get_place_body\" : {",
+									"                \"msg\": \"Tidak akan keluar response kalau jumlah 0\"",
+									"            }",
+									"        }",
+									"    ];",
+									"}",
+									"",
+									"let currentData = queue.shift();",
+									"pm.environment.set(\"get_place_country\", currentData[\"get_place_country\"]);",
+									"pm.environment.set(\"get_place_jumlah\", currentData[\"get_place_jumlah\"]);",
+									"pm.environment.set(\"get_place_status_code\", currentData[\"get_place_status_code\"]);",
+									"pm.environment.set(\"get_place_body\", currentData[\"get_place_body\"]);",
+									"pm.environment.set(\"get_place\", queue);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e8c2784b-fa20-4417-81c3-ace0493ab2a8",
+								"exec": [
+									"let queue = pm.environment.get(\"get_place\");",
+									"",
+									"if(!queue || queue.length <= 0){",
+									"    //postman.setNextRequest(\"Post Mahasiswa\");",
+									"}",
+									"else{",
+									"    postman.setNextRequest(\"Get Place\");",
+									"}",
+									"",
+									"pm.test(\"Status code is correct\", function () {",
+									"    pm.response.to.have.status(pm.environment.get(\"get_place_status_code\"));",
+									"});",
+									"",
+									"pm.test(\"Data is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.eql(pm.environment.get(\"get_place_body\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/217116595/api/getSimilarPlace/{{get_place_country}}/{{get_place_jumlah}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116595",
+								"api",
+								"getSimilarPlace",
+								"{{get_place_country}}",
+								"{{get_place_jumlah}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Famous Food",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d973cb54-1db1-42d5-8130-4c61a6f9bbe9",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const schema = {",
+									"    \"Famous\": \"string\",",
+									"    \"Restaurant\": {",
+									"        \"id\": \"string\",",
+									"        \"name\": \"string\"",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid', function() {",
+									"  pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+									"});",
+									"",
+									"tests[\"responnya lebih dr 0\"] = pm.response.json().Restaurant.length > 0;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/217116595/api/getFoodDrink?country=Paris",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116595",
+								"api",
+								"getFoodDrink"
+							],
+							"query": [
+								{
+									"key": "country",
+									"value": "Paris"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Diving",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3843c759-3aba-4d06-a1d3-19a11747f266",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const schema = {",
+									"    \"Famous\": \"string\",",
+									"    \"Restaurant\": {",
+									"        \"id\": \"string\",",
+									"        \"name\": \"string\"",
+									"    }",
+									"};",
+									"",
+									"pm.test('Schema is valid', function() {",
+									"  pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+									"});",
+									"",
+									"tests[\"responnya lebih dr 0\"] = pm.response.json().Diving.length > 0;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/217116595/api/getDiving?country=Paris",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"217116595",
+								"api",
+								"getDiving"
+							],
+							"query": [
+								{
+									"key": "country",
+									"value": "Paris"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
