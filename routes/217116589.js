@@ -1,25 +1,42 @@
 const express = require("express");
 const router = express.Router();
+const db=require("../models/db");
 const jwt = require("jsonwebtoken");
 var request = require('request');
 router.use(express.urlencoded({extended:true}));
 
-router.post("/register",function(req,res){
+router.post("/register",async function(req,res){
     let email=req.body.email;
     let username=req.body.username;
     let nama_lengkap=req.body.nama_lengkap; 
     let nomor_hp=req.body.nomor_hp;
     let password=req.body.password;
 
-    if(password!="" && typeof(password)!="undefined" && email!="" && typeof(email)!="undefined" && username!="" && typeof(username)!="undefined" && nama_lengkap!="" && typeof(nama_lengkap)!="undefined" && nomor_hp!="" && typeof(nomor_hp)!="undefined"){
-        return res.status(200).send({
-            "message":"berhasil register"
-        });
-    }
-    else{
+    if(!password || !email || !username || !nama_lengkap || !nomor_hp){
         return res.status(400).send({
             "message":"data ada yang kosong"
         });
+    }
+    else{
+        const conn=await db.getConnection();
+        try {
+            const data_user = await db.executeQuery(conn,`select * from user where email='${email}'`);
+            if(data_user.length>0){
+                conn.release();
+                return res.status(400).send({
+                    "message":"email pernah digunakan"
+                });
+            }
+            else{
+                const insert = await db.executeQuery(conn,`insert into user values(${null},'${email}','${username}','${nama_lengkap}','${nomor_hp}','${password}')`);
+                conn.release();
+                return res.status(200).send({
+                    "message":"berhasil register"
+                });
+            }
+        } catch (error) {
+            return res.status(400).send(error);
+        }
     }
 });
 
