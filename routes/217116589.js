@@ -28,7 +28,7 @@ router.post("/register",async function(req,res){
                 });
             }
             else{
-                const insert = await db.executeQuery(conn,`insert into user values(${null},'${email}','${username}','${nama_lengkap}','${nomor_hp}','${password}')`);
+                const insert = await db.executeQuery(conn,`insert into user values(${null},'${email}','${username}','${nama_lengkap}','${nomor_hp}','${password}',0,0,10)`);
                 conn.release();
                 return res.status(200).send({
                     "message":"berhasil register"
