@@ -112,7 +112,6 @@ router.put("/edit_user",async function(req,res){
         }
     }
 });
-//https://www.triposo.com/api/20200405/location.json?part_of=France&tag_labels=city&count=10&fields=id,name,score,snippet&order_by=-score&token=owymkzfrhejlzq2psl0k0otvyvrczhyi&account=LNPHPM5C
 function get_Top_city_in_country(API,ID_Akun,Negara){
     return new Promise(function(resolve,reject){
         var api_key=API;
@@ -135,9 +134,20 @@ function get_Top_city_in_country(API,ID_Akun,Negara){
 }
 router.get("/get_Top_city_in_country",async function(req,res){
     let hasil=[];
-    let kota_yang_dicari=req.query.dicari;
+    let kota_yang_dicari=req.body.dicari;
+    let negara=req.body.negara;
+    let token=req.query.token;
+    let user = {};
+    if(!token){
+        return res.status(401).send("Token not found");
+    }
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
+    }
     try {
-        let data_top_city=JSON.parse(await get_Top_city_in_country(req.query.api_key,req.query.id_akun,req.query.negara));
+        let data_top_city=JSON.parse(await get_Top_city_in_country('owymkzfrhejlzq2psl0k0otvyvrczhyi','LNPHPM5C',negara));
         data_top_city.results.forEach(element => {
             if(element.name.toUpperCase().includes(kota_yang_dicari.toUpperCase())){
                 hasil.push({
@@ -147,13 +157,28 @@ router.get("/get_Top_city_in_country",async function(req,res){
                 })
             }
         });
-        if(hasil.length>0){
-            res.status(200).send(hasil);
-        }
-        else{
-            res.status(404).send({
-                "message":"kota tidak ditemukan"
-            });
+        const conn=await db.getConnection();
+        try {
+            const data_user = await db.executeQuery(conn,`select * from user where email='${user.email}'`);
+            let api_hit=parseInt(data_user[0].api_hit)-1;
+            if(api_hit>=0){
+                const update = await db.executeQuery(conn,`update user set api_hit=${api_hit} where email='${user.email}'`);
+                if(hasil.length>0){
+                    res.status(200).send(hasil);
+                }
+                else{
+                    res.status(404).send({
+                        "message":"kota tidak ditemukan"
+                    });
+                }
+            }
+            else{
+                res.status(400).send({
+                    "message":"Api Hit anda habis, silahkan lakukan Top Up"
+                });
+            }
+        } catch (error) {
+            return res.status(400).send(error);
         }
     } catch (error) {
         res.status(500).send(error);
