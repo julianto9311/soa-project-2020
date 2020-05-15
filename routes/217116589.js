@@ -35,7 +35,7 @@ router.post("/register",async function(req,res){
                 });
             }
         } catch (error) {
-            return res.status(400).send(error);
+            return res.status(500).send(error);
         }
     }
 });
@@ -67,7 +67,7 @@ router.post("/login",async function(req,res){
                 });
             }
         } catch (error) {
-            return res.status(400).send(error);
+            return res.status(500).send(error);
         }
     }
 });
@@ -108,10 +108,55 @@ router.put("/edit_user",async function(req,res){
                 });
             }
         } catch (error) {
-            return res.status(400).send(error);
+            return res.status(500).send(error);
         }
     }
 });
+// harganya 1000 per api hit
+router.post("/top_up_api_hit",async function(req,res){
+    let email=req.body.email;
+    let password=req.body.password;
+    let jumlah_api_hit=req.body.jumlah_api_hit;
+    let jumlah_bayar=parseInt(jumlah_api_hit)*1000;
+
+    if(!email || !password || !jumlah_api_hit){
+        return res.status(400).send({
+            "message" : "ada data yang kosong"
+        });
+    }
+    else{
+        const conn=await db.getConnection();
+        try {
+            const data_user = await db.executeQuery(conn,`select * from user where email='${email}' and password='${password}'`);
+            if(data_user.length>0){
+                let saldo=parseInt(data_user[0].saldo)-jumlah_bayar;
+                if(saldo>=0){
+                    let api_hit=parseInt(data_user[0].api_hit)+parseInt(jumlah_api_hit);
+                    const update = await db.executeQuery(conn,`update user set api_hit=${api_hit},saldo=${saldo} where email='${email}'`);
+                    conn.release();
+                    return res.status(200).send({
+                        "message":`Top Up Api Hit berhasil!`
+                    });
+                }
+                else{
+                    conn.release();
+                    return res.status(400).send({
+                        "message" : "saldo tidak mencukupi!"
+                    });
+                }
+            }
+            else{
+                conn.release();
+                return res.status(400).send({
+                    "message" : "salah email atau password"
+                });
+            }
+        } catch (error) {
+            return res.status(500).send(error);
+        }
+    }
+});
+
 function get_Top_city_in_country(API,ID_Akun,Negara){
     return new Promise(function(resolve,reject){
         var api_key=API;
@@ -132,6 +177,7 @@ function get_Top_city_in_country(API,ID_Akun,Negara){
         });
     });
 }
+
 router.get("/get_Top_city_in_country",async function(req,res){
     let hasil=[];
     let kota_yang_dicari=req.body.dicari;
@@ -146,19 +192,24 @@ router.get("/get_Top_city_in_country",async function(req,res){
     }catch(err){
         return res.status(401).send("Token Invalid");
     }
-    try {
-        let data_top_city=JSON.parse(await get_Top_city_in_country('owymkzfrhejlzq2psl0k0otvyvrczhyi','LNPHPM5C',negara));
-        data_top_city.results.forEach(element => {
-            if(element.name.toUpperCase().includes(kota_yang_dicari.toUpperCase())){
-                hasil.push({
-                    id: element.id,
-                    name: element.name,
-                    Penjelasan: element.snippet
-                })
-            }
+    if(!negara || !kota_yang_dicari){
+        res.status(400).send({
+            "message":"data ada yang kosong"
         });
-        const conn=await db.getConnection();
+    }
+    else{
         try {
+            let data_top_city=JSON.parse(await get_Top_city_in_country('owymkzfrhejlzq2psl0k0otvyvrczhyi','LNPHPM5C',negara));
+            data_top_city.results.forEach(element => {
+                if(element.name.toUpperCase().includes(kota_yang_dicari.toUpperCase())){
+                    hasil.push({
+                        id: element.id,
+                        name: element.name,
+                        Penjelasan: element.snippet
+                    })
+                }
+            });
+            const conn=await db.getConnection();
             const data_user = await db.executeQuery(conn,`select * from user where email='${user.email}'`);
             let api_hit=parseInt(data_user[0].api_hit)-1;
             if(api_hit>=0){
@@ -174,14 +225,12 @@ router.get("/get_Top_city_in_country",async function(req,res){
             }
             else{
                 res.status(400).send({
-                    "message":"Api Hit anda habis, silahkan lakukan Top Up"
+                    "message":"Api Hit anda habis, silahkan lakukan Top Up Api Hit terlebih dahulu!"
                 });
             }
         } catch (error) {
-            return res.status(400).send(error);
+            res.status(500).send(error);
         }
-    } catch (error) {
-        res.status(500).send(error);
     }
 });
 module.exports = router;
