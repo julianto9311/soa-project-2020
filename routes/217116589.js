@@ -40,42 +40,68 @@ router.post("/register",async function(req,res){
     }
 });
 
-router.post("/login",function(req,res){
+router.post("/login",async function(req,res){
     let email=req.body.email;
     let password=req.body.password;
 
-    if(email=="admin" && password=="admin"){
-        return res.status(200).send({
-            "message" : "berhasil masuk sebagai admin"
-        });
-    }
-    else if(email!="" && typeof(email)!="undefined" && password!="" && typeof(password)!="undefined" ){
-        return res.status(200).send({
-            "message" : "berhasil masuk user"
-        });
-    }
-    else{
+    if(!email || !password){
         return res.status(400).send({
             "message" : "ada data yang kosong"
         });
     }
+    else{
+        const conn=await db.getConnection();
+        try {
+            const data_user = await db.executeQuery(conn,`select * from user where email='${email}' and password='${password}'`);
+            if(data_user.length>0){
+                conn.release();
+                const token = jwt.sign({ 
+                    exp: Math.floor(Date.now() / 1000) + (60 * 60),   
+                    "email":email
+                },"proyek_uas");
+                res.status(200).send(token); 
+            }
+            else{
+                return res.status(400).send({
+                    "message" : "salah email atau password"
+                });
+            }
+        } catch (error) {
+            return res.status(400).send(error);
+        }
+    }
 });
 
-router.post("/edit_user",function(req,res){
+router.put("/edit_user",function(req,res){
+    let email=req.body.email;
     let username=req.body.username;
     let nama_lengkap=req.body.nama_lengkap; 
     let nomor_hp=req.body.nomor_hp;
     let password=req.body.password;
+    let newpassword=req.body.newpassword;
 
-    if(password!=""  && username!="" && nama_lengkap!="" && nomor_hp!=""){
-        return res.status(200).send({
-            "message":"berhasil edit user"
-        });
-    }
-    else{
+    if(!password || !username || !nama_lengkap || !nomor_hp || !email){
         return res.status(400).send({
             "message":"data ada yang kosong"
         });
+    }
+    else{
+        const conn=await db.getConnection();
+        try {
+            const data_user = await db.executeQuery(conn,`select * from user where email='${email}' and password='${password}'`);
+            if(data_user.length>0){
+                return res.status(200).send({
+                    "message":"berhasil edit user"
+                });
+            }
+            else{
+                return res.status(400).send({
+                    "message" : "salah email atau password"
+                });
+            }
+        } catch (error) {
+            return res.status(400).send(error);
+        }
     }
 });
 //https://www.triposo.com/api/20200405/location.json?part_of=France&tag_labels=city&count=10&fields=id,name,score,snippet&order_by=-score&token=owymkzfrhejlzq2psl0k0otvyvrczhyi&account=LNPHPM5C
