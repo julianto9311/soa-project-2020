@@ -72,7 +72,7 @@ router.post("/login",async function(req,res){
     }
 });
 
-router.put("/edit_user",function(req,res){
+router.put("/edit_user",async function(req,res){
     let email=req.body.email;
     let username=req.body.username;
     let nama_lengkap=req.body.nama_lengkap; 
@@ -90,11 +90,19 @@ router.put("/edit_user",function(req,res){
         try {
             const data_user = await db.executeQuery(conn,`select * from user where email='${email}' and password='${password}'`);
             if(data_user.length>0){
+                if(!newpassword){
+                    const update = await db.executeQuery(conn,`update user set username='${username}',nama_lengkap='${nama_lengkap}',nomor_hp='${nomor_hp}' where email='${email}'`);
+                }
+                else{
+                    const update = await db.executeQuery(conn,`update user set username='${username}',nama_lengkap='${nama_lengkap}',nomor_hp='${nomor_hp}',password='${newpassword}' where email='${email}'`);
+                }
+                conn.release();
                 return res.status(200).send({
                     "message":"berhasil edit user"
                 });
             }
             else{
+                conn.release();
                 return res.status(400).send({
                     "message" : "salah email atau password"
                 });
