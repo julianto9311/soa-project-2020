@@ -3,6 +3,7 @@ const request = require('request');
 const db = require("../models/db");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
+const midtransClient = require('midtrans-client');
 router.use(express.urlencoded({extended:true}));
 
 router.get("/article", function(req,res){
@@ -282,20 +283,41 @@ router.get("/reviewTour/:id", async function(req,res){
     else return res.status(400).send({message: "User tidak ditemukan"});
 });
 
-router.post("/saldo", async function(req,res){
-    let email = req.body.email;
-    let password = req.body.password;
-    let jumlah = req.body.jumlah;
-
+//contoh url ejs
+//http://localhost:3000/217116590/Halaman_TopUp_Saldo?email=julianto@gmail.com&password=123&jumlah=300000
+router.get("/Halaman_TopUp_Saldo", async function(req,res){
+    let email = req.query.email;
+    let password = req.query.password;
+    let jumlah = req.query.jumlah;
     if(email==""||password==""||jumlah=="")return res.status(400).send({message: "Field ada yang kosong"});
     else{
         const conn = await db.getConnection();
         let cek = await db.executeQuery(conn,`select * from user where email = '${email}' and password = '${password}'`);
         if(cek.length > 0){
             let saldo = parseInt(cek[0].saldo) + parseInt(jumlah);
+            let snap = new midtransClient.Snap({
+                isProduction : false,
+                serverKey : 'SB-Mid-server-ATA7A68g5F0til1QsrQaqkwm',
+                clientKey : 'SB-Mid-client-TsfOqnDmOESCA2Fl'
+            });
+            let parameter = {
+                "transaction_details": {
+                "order_id": "order-id-node-"+Math.round((new Date()).getTime() / 1000),
+                "gross_amount": jumlah
+                }, "credit_card":{
+                "secure" : true
+                }
+            };
             let update = await db.executeQuery(conn,`update user set saldo = ${saldo} where email = '${email}'`);
             conn.release();
-            return res.status(200).send({message: "Saldo berhasil ditambahkan"});
+            snap.createTransactionToken(parameter).then((transactionToken)=>{
+                res.render('top_up_saldo',{
+                    token: transactionToken, 
+                    clientKey: snap.apiConfig.clientKey,
+                    jumlah:jumlah,
+                    email:email
+                })
+            });
         }
         else return res.status(400).send({message: "Email atau Password salah"});
     }

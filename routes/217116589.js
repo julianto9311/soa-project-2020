@@ -7,12 +7,11 @@ router.use(express.urlencoded({extended:true}));
 
 router.post("/register",async function(req,res){
     let email=req.body.email;
-    let username=req.body.username;
     let nama_lengkap=req.body.nama_lengkap; 
     let nomor_hp=req.body.nomor_hp;
     let password=req.body.password;
 
-    if(!password || !email || !username || !nama_lengkap || !nomor_hp){
+    if(!password || !email || !nama_lengkap || !nomor_hp){
         return res.status(400).send({
             "message":"data ada yang kosong"
         });
@@ -28,7 +27,7 @@ router.post("/register",async function(req,res){
                 });
             }
             else{
-                const insert = await db.executeQuery(conn,`insert into user values(${null},'${email}','${username}','${nama_lengkap}','${nomor_hp}','${password}',0,0,10)`);
+                const insert = await db.executeQuery(conn,`insert into user values(${null},'${email}','${nama_lengkap}','${nomor_hp}','${password}',0,0,10)`);
                 conn.release();
                 return res.status(200).send({
                     "message":"berhasil register"
