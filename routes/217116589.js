@@ -57,9 +57,10 @@ router.post("/login",async function(req,res){
                 conn.release();
                 const token = jwt.sign({ 
                     exp: Math.floor(Date.now() / 1000) + (60 * 60),   
-                    "email":email
+                    "email":email,
+                    "tipe_user": parseInt(data_user[0].tipe_user)
                 },"proyek_uas");
-                res.status(200).send(token); 
+                res.status(200).send(token);
             }
             else{
                 return res.status(400).send({

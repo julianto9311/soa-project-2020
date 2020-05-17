@@ -1,7 +1,9 @@
 const express = require("express");
 const request = require('request');
-const conn = require("../connection");
+const db = require("../models/db");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
+router.use(express.urlencoded({extended:true}));
 
 router.get("/article", function(req,res){
     let kota = req.query.kota;
@@ -168,128 +170,159 @@ router.get("/tour/:id", function(req,res){
     }
 });
 
-router.post("/tour/review", async function(req,res){
-    let tour = req.query.tour;
-    let token = req.headers('token');
+router.post("/reviewTour", async function(req,res){
+    let token = req.query.token;
+    let id_jenis = req.body.id;
+    let nama_jenis = req.body.nama;
     let comment = req.body.comment;
     let rating = req.body.rating;
+    let user;
 
-    let user = jwt.decode(token);
-    if(user){
-        if(user.tipe>0){
-            let cek = await (conn.query(`select * from account where username = '${user.username}'`));
-            if(cek.length > 0){
-                if(cek[0].api_hit - 1 >= 0){
-                    let insert = await (conn.query(`insert into review values('','${user.username}','${tour}','${comment}',${rating})`));
-                    return res.status(200).send({msg: "Review berhasil ditambahkan"});
-                }
-                else return res.status(400).send({msg: "Api hit tidak cukup"});
-            }
-            else return res.status(400).send({msg: "User tidak ditemukan"});
-        }
-        else return res.status(400).send({msg: "Endpoint ini hanya untuk premium user"});
+    if(!token)return res.status(401).send("Token not found");
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
     }
-    else return res.status(400).send({msg: "Token tidak ditemukan"});
+    if(id_jenis==""||nama_jenis==""||comment==""||rating=="")return res.status(400).send({message: "Field ada yang kosong"});
+    else{
+        const conn = await db.getConnection();
+        let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+        if(cek.length > 0){
+            if(user.tipe_user>0){
+                if(parseInt(cek[0].api_hit) - 1 >= 0){
+                    let api_hit = parseInt(cek[0].api_hit) - 1;
+                    let update = await db.executeQuery(conn,`update user set api_hit = ${api_hit} where email = '${user.email}'`);
+                    let insert = await db.executeQuery(conn,`insert into review values('','${user.email}','${id_jenis}','${nama_jenis}','Tour','${comment}',${rating})`);
+                    conn.release();
+                    return res.status(200).send({message: "Review berhasil ditambahkan"});
+                }
+                else return res.status(400).send({message: "Api hit tidak cukup"});
+            }
+            else return res.status(400).send({message: "Endpoint ini hanya untuk premium user"});
+        }
+        else return res.status(400).send({message: "User tidak ditemukan"});
+    }
 });
 
-router.get("/tour/review", async function(req,res){
-    let token = req.headers('token');
+router.get("/reviewTour", async function(req,res){
+    let token = req.query.token;
+    let user;
 
-    let user = jwt.decode(token);
-    if(user){
-        if(user.tipe>0){
-            let cek = await (conn.query(`select * from account where username = '${user.username}'`));
-            if(cek.length > 0){
-                if(cek[0].api_hit - 1 >= 0){
-                    let tampil = await (conn.query(`select * from review`));
-                    return res.status(200).send(tampil);
-                }
-                else return res.status(400).send({msg: "Api hit tidak cukup"});    
-            }
-            else return res.status(400).send({msg: "User tidak ditemukan"});
-        }
-        else return res.status(400).send({msg: "Endpoint ini hanya untuk premium user"});
+    if(!token)return res.status(401).send("Token not found");
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
     }
-    else return res.status(400).send({msg: "Token tidak ditemukan"});
+    const conn = await db.getConnection();
+    let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+    if(cek.length > 0){
+        if(parseInt(cek[0].api_hit) - 1 >= 0){
+            let api_hit = parseInt(cek[0].api_hit) - 1;
+            let update = await db.executeQuery(conn,`update user set api_hit = ${api_hit} where email = '${user.email}'`);
+            let tampil = await db.executeQuery(conn,`select * from review`);
+            conn.release();
+            let hasil = [];
+            tampil.forEach(e => {
+                hasil.push({
+                    Email_Reviewer: e.email,
+                    Nama_Jenis: e.nama_jenis,
+                    Jenis: e.jenis,
+                    Comment: e.comment,
+                    Rating: e.rating
+                });
+            });
+            return res.status(200).send(hasil);
+        }
+        else return res.status(400).send({message: "Api hit tidak cukup"});    
+    }
+    else return res.status(400).send({message: "User tidak ditemukan"});
 });
 
-router.get("/tour/review/:id", async function(req,res){
+router.get("/reviewTour/:id", async function(req,res){
     let tour = req.params.id;
-    let token = req.headers('token');
+    let token = req.query.token;
+    let user;
 
-    let user = jwt.decode(token);
-    if(user){
-        if(user.tipe>0){
-            let cek = await (conn.query(`select * from account where username = '${user.username}'`));
-            if(cek.length > 0){
-                if(cek[0].api_hit - 1 >= 0){
-                    let tampil = await (conn.query(`select * from review where id_tour = '${tour}'`));
-                    return res.status(200).send(tampil);
-                }
-                else return res.status(400).send({msg: "Api hit tidak cukup"});
-            }
-            else return res.status(400).send({msg: "User tidak ditemukan"});
-        }
-        else return res.status(400).send({msg: "Endpoint ini hanya untuk premium user"});
+    if(!token)return res.status(401).send("Token not found");
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
     }
-    else return res.status(400).send({msg: "Token tidak ditemukan"});
+    const conn = await db.getConnection();
+    let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+    if(cek.length > 0){
+        if(user.tipe_user>0){
+            if(parseInt(cek[0].api_hit) - 1 >= 0){
+                let api_hit = parseInt(cek[0].api_hit) - 1;
+                let update = await db.executeQuery(conn,`update user set api_hit = ${api_hit} where email = '${user.email}'`);
+                let tampil = await db.executeQuery(conn,`select * from review where id_jenis = '${tour}'`);
+                conn.release();
+                let temp = [];
+                tampil.forEach(e => {
+                    temp.push({
+                        Email_Reviewer: e.email,
+                        Jenis: e.jenis,
+                        Comment: e.comment,
+                        Rating: e.rating
+                    });
+                });
+                let hasil = {
+                    Nama_Jenis: tampil[0].nama_jenis,
+                    Comment: temp
+                }
+                return res.status(200).send(hasil);
+            }
+            else return res.status(400).send({message: "Api hit tidak cukup"});
+        }
+        else return res.status(400).send({message: "Endpoint ini hanya untuk premium user"});
+    }
+    else return res.status(400).send({message: "User tidak ditemukan"});
 });
 
 router.post("/saldo", async function(req,res){
-    let token = req.headers('token');
+    let email = req.body.email;
+    let password = req.body.password;
     let jumlah = req.body.jumlah;
 
-    let user = jwt.decode(token);
-    if(user){
-        let cek = await (conn.query(`select * from account where username = '${user.username}'`));
+    if(email==""||password==""||jumlah=="")return res.status(400).send({message: "Field ada yang kosong"});
+    else{
+        const conn = await db.getConnection();
+        let cek = await db.executeQuery(conn,`select * from user where email = '${email}' and password = '${password}'`);
         if(cek.length > 0){
             let saldo = parseInt(cek[0].saldo) + parseInt(jumlah);
-            let update = await (conn.query(`update account set saldo = ${saldo} where username = '${user.username}'`));
-            return res.status(200).send({msg: "Saldo berhasil ditambahkan"});
+            let update = await db.executeQuery(conn,`update user set saldo = ${saldo} where email = '${email}'`);
+            conn.release();
+            return res.status(200).send({message: "Saldo berhasil ditambahkan"});
         }
-        else return res.status(400).send({msg: "User tidak ditemukan"});
+        else return res.status(400).send({message: "Email atau Password salah"});
     }
-    else return res.status(400).send({msg: "Token tidak ditemukan"});
-});
-
-router.post("/api_hit", async function(req,res){
-    let token = req.headers('token');
-    let jumlah = req.body.jumlah;
-
-    let user = jwt.decode(token);
-    if(user){
-        let cek = await (conn.query(`select * from account where username = '${user.username}'`));
-        if(cek.length > 0){
-            if(parseInt(cek[0].saldo) - (parseInt(jumlah) * 5000) >= 0){
-                let saldo = parseInt(cek[0].saldo) - (parseInt(jumlah) * 5000);
-                let api_hit = parseInt(cek[0].api_hit) + parseInt(jumlah);
-                let update = await (conn.query(`update account set saldo = ${saldo}, api_hit = ${api_hit} where username = '${user.username}'`));
-                return res.status(200).send({msg: "Api hit berhasil ditambahkan"});
-            }
-            else return res.status(400).send({msg: "Saldo tidak cukup"});
-        }
-        else return res.status(400).send({msg: "User tidak ditemukan"});
-    }
-    else return res.status(400).send({msg: "Token tidak ditemukan"});
 });
 
 router.post("/subscribe", async function(req,res){
-    let token = req.headers('token');
+    let email = req.body.email;
+    let password = req.body.password;
 
-    let user = jwt.decode(token);
-    if(user){
-        let cek = await (conn.query(`select * from account where username = '${user.username}'`));
+    if(email==""||password=="")return res.status(400).send({message: "Field ada yang kosong"});
+    else{
+        const conn = await db.getConnection();
+        let cek = await db.executeQuery(conn,`select * from user where email = '${email}' and password = '${password}'`);
         if(cek.length > 0){
-            if(parseInt(cek[0].saldo) - 500000 >= 0){
-                let saldo = parseInt(cek[0].saldo) - 500000;
-                let update = await (conn.query(`update account set saldo = ${saldo}, tipe = 1 where username = '${user.username}'`));
-                return res.status(200).send({msg: "Akun berhasil menjadi premium"});
+            if(parseInt(cek[0].tipe_user) == 0){
+                if(parseInt(cek[0].saldo) - 500000 >= 0){
+                    let saldo = parseInt(cek[0].saldo) - 500000;
+                    let update = await db.executeQuery(conn,`update user set saldo = ${saldo}, tipe_user = 1 where email = '${email}'`);
+                    conn.release();
+                    return res.status(200).send({message: "Akun berhasil menjadi premium"});
+                }
+                else return res.status(400).send({message: "Saldo tidak cukup"});
             }
-            else return res.status(400).send({msg: "Saldo tidak cukup"});
+            else return res.status(400).send({message: "Akun sudah premium"});
         }
-        else return res.status(400).send({msg: "User tidak ditemukan"});
+        else return res.status(400).send({message: "Email atau Password salah"});
     }
-    else return res.status(400).send({msg: "Token tidak ditemukan"});
 });
 
 module.exports = router;
