@@ -10,6 +10,9 @@
    <body>
     <div class='cart'>
       <input type='hidden' id='snap_token' value="<%= token %>"/>
+      <input type='hidden' id='email' value="<%= email %>"/>
+      <input type='hidden' id='jumlah' value="<%= jumlah %>"/>
+      <input type='hidden' id='password' value="<%= password %>"/>
       <div class='popup'>
         <div class='row header'>
           <span>Top Up</span>
@@ -27,30 +30,43 @@
         </div>
     </div>
 
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
+      function TambahSaldo(){
+          let params = {
+              "email" : $("#email").val(),
+              "password" : $("#password").val(),
+              "jumlah" : $("#jumlah").val()
+          };
+          $.ajax({
+              url : "http://localhost:3000/217116590/Tambah_Saldo",
+              method : "POST",
+              data : params,
+              success : function(data){
+                console.log("SUCCESS Update Database");
+              }
+          });
+      }
+      //pilih cara pembayaran dan midtrans
       var token = document.querySelectorAll('#snap_token')[0].value;
 
       var checkoutBtn = document.querySelectorAll('.checkout')[0];
       checkoutBtn.onclick = function(){
         console.log('opening snap popup:');
-        
-        // Open Snap popup with defined callbacks.
         snap.pay(token, {
-          onSuccess: function(result) {
-            console.log("SUCCESS", result);
-            alert("Payment accepted \r\n"+JSON.stringify(result));
+          // Optional
+          onSuccess: function(result){
+            TambahSaldo();
           },
-          onPending: function(result) {
-            console.log("Payment pending", result);
-            alert("Payment pending \r\n"+JSON.stringify(result));
+          // Optional
+          onPending: function(result){
+            TambahSaldo();
           },
-          onError: function() {
-            console.log("Payment error");
+          // Optional
+          onError: function(result){
+            TambahSaldo();
           }
         });
-        // For more advanced use, refer to: https://snap-docs.midtrans.com/#snap-js
-
       }
     </script>
    </body>

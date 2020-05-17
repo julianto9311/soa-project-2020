@@ -294,7 +294,6 @@ router.get("/Halaman_TopUp_Saldo", async function(req,res){
         const conn = await db.getConnection();
         let cek = await db.executeQuery(conn,`select * from user where email = '${email}' and password = '${password}'`);
         if(cek.length > 0){
-            let saldo = parseInt(cek[0].saldo) + parseInt(jumlah);
             let snap = new midtransClient.Snap({
                 isProduction : false,
                 serverKey : 'SB-Mid-server-ATA7A68g5F0til1QsrQaqkwm',
@@ -308,19 +307,36 @@ router.get("/Halaman_TopUp_Saldo", async function(req,res){
                 "secure" : true
                 }
             };
-            let update = await db.executeQuery(conn,`update user set saldo = ${saldo} where email = '${email}'`);
             conn.release();
             snap.createTransactionToken(parameter).then((transactionToken)=>{
                 res.render('top_up_saldo',{
                     token: transactionToken, 
                     clientKey: snap.apiConfig.clientKey,
                     jumlah:jumlah,
+                    password:password,
                     email:email
                 })
             });
         }
         else return res.status(400).send({message: "Email atau Password salah"});
     }
+});
+
+router.post("/Tambah_Saldo", async function(req,res){
+    
+    let email = req.body.email;
+    let password = req.body.password;
+    let jumlah = req.body.jumlah;
+    const conn = await db.getConnection();
+    try {
+        let cek = await db.executeQuery(conn,`select * from user where email = '${email}' and password = '${password}'`);
+        let saldo = parseInt(cek[0].saldo) + parseInt(jumlah);
+        let update = await db.executeQuery(conn,`update user set saldo = ${saldo} where email = '${email}'`);
+        conn.release();
+    } catch (error) {
+        return res.status(500).send(error);
+    }
+            
 });
 
 router.post("/subscribe", async function(req,res){
