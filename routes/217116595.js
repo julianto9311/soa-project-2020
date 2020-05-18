@@ -19,7 +19,7 @@ function getRestaurant(country, label, jumlah){
     });
 }
 
-router.get("/api/getRestaurant/:country/:jumlah", async function(req, res){
+router.get("/api/getRestaurant", async function(req, res){
     // if(req.params.country=="kosong"){
     //     res.status(400).send({"msg" : "Restaurant dengan negara kosong tidak ditemukan :("});
     // }
@@ -28,16 +28,37 @@ router.get("/api/getRestaurant/:country/:jumlah", async function(req, res){
     //     .send({"msg":`Tidak akan keluar response kalau jumlah 0`});
     // }
     // else {
-        const restaurant = JSON.parse(await getRestaurant(req.query.country, req.query.label, req.query.jumlah));
+        let token = req.query.token;
+        let user;
 
-        const cetak = [];
-        restaurant.results.forEach(element => {
-            cetak.push({
-                id: element.id,
-                name: element.name
-            })
-        });
-        res.status(200).send(cetak);
+        if(!token)return res.status(401).send("Token not found");
+        try{
+            user = jwt.verify(token,"proyek_uas");
+        }catch(err){
+            return res.status(401).send("Token Invalid");
+        }
+
+        const conn = await db.getConnection();
+        let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+        if(cek[0].api_hit > 0){
+            //UPDATE API_HIT
+            let temp = cek[0].api_hit-1;
+            let data = await db.executeQuery(conn,`update user set api_hit=${temp} where email = '${user.email}'`);
+
+            //CALL 3RDAPI
+            const restaurant = JSON.parse(await getRestaurant(req.query.country, req.query.label, req.query.jumlah));
+            const cetak = [];
+            restaurant.results.forEach(element => {
+                cetak.push({
+                    id: element.id,
+                    name: element.name
+                })
+            });
+            res.status(200).send(cetak);
+        }
+        else res.status(400).send("API HIT HABIS!!!");
+
+        
     //     res.status(200).send({
     //         "id": "N__429735547",
     //         "name": "Clärchens Ballhaus"
@@ -63,7 +84,7 @@ function getSimilarPlace(country, jumlah){
     });
 }
 
-router.get("/api/getSimilarPlace/:country/:jumlah", async function(req, res){
+router.get("/api/getSimilarPlace", async function(req, res){
     // if(req.params.country=="kosong"){
     //     res.status(400).send({"msg" : "Tempat dengan negara kosong tidak ditemukan :("});
     // }
@@ -72,16 +93,37 @@ router.get("/api/getSimilarPlace/:country/:jumlah", async function(req, res){
     //     .send({"msg":`Tidak akan keluar response kalau jumlah 0`});
     // }
     // else {
-        const restaurant = JSON.parse(await getSimilarPlace(req.params.country, req.params.jumlah));
+        let token = req.query.token;
+        let user;
 
-        const cetak = [];
-        restaurant.results.forEach(element => {
-            cetak.push({
-                id: element.id,
-                name: element.name
-            })
-        });
-        res.status(200).send(cetak);
+        if(!token)return res.status(401).send("Token not found");
+        try{
+            user = jwt.verify(token,"proyek_uas");
+        }catch(err){
+            return res.status(401).send("Token Invalid");
+        }
+
+        const conn = await db.getConnection();
+        let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+        if(cek[0].api_hit > 0){
+            //UPDATE API_HIT
+            let temp = cek[0].api_hit-1;
+            let data = await db.executeQuery(conn,`update user set api_hit=${temp} where email = '${user.email}'`);
+
+            //CALL 3RDAPI
+            const restaurant = JSON.parse(await getSimilarPlace(req.query.country, req.query.jumlah));
+            const cetak = [];
+            restaurant.results.forEach(element => {
+                cetak.push({
+                    id: element.id,
+                    name: element.name
+                })
+            });
+            res.status(200).send(cetak);
+        }
+        else res.status(400).send("API HIT HABIS!!!");
+
+        
 
     //     res.status(200).send({
     //         "id": "T__b98be764da47",
@@ -108,42 +150,80 @@ function getFoodDrink(country){
 }
 
 router.get("/api/getFoodDrink", async function(req, res){
-    const country = req.query.country;
-    const foodDrink = JSON.parse(await getFoodDrink(country));
+    let token = req.query.token;
+    let user;
 
-    const tempLabel = foodDrink.results[0].label;
-    const restaurant = JSON.parse(await getRestaurant(country, tempLabel, 10));
+    if(!token)return res.status(401).send("Token not found");
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
+    }
 
-    const cetak = [];
-    restaurant.results.forEach(element => {
-        cetak.push({
-            id: element.id,
-            name: element.name
-        })
-    });
-    res.status(200).send({
-        Famous: tempLabel,
-        Restaurant: cetak
-    });
+    const conn = await db.getConnection();
+    let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+    if(cek[0].api_hit > 0){
+        //UPDATE API_HIT
+        let temp = cek[0].api_hit-1;
+        let data = await db.executeQuery(conn,`update user set api_hit=${temp} where email = '${user.email}'`);
+
+        //CALL 3RDAPI
+        const country = req.query.country;
+        const foodDrink = JSON.parse(await getFoodDrink(country));
+        const tempLabel = foodDrink.results[0].label;
+        const restaurant = JSON.parse(await getRestaurant(country, tempLabel, 10));
+
+        const cetak = [];
+        restaurant.results.forEach(element => {
+            cetak.push({
+                id: element.id,
+                name: element.name
+            })
+        });
+        res.status(200).send({
+            Famous: tempLabel,
+            Restaurant: cetak
+        });
+    }
+    else res.status(400).send("API HIT HABIS!!!");
 });
 
 //=====================================================================================================================
 
 router.get("/api/getDiving", async function(req, res){
-    const country = req.query.country;
-    const restaurant = JSON.parse(await getRestaurant(country, "diving", 10));
+    let token = req.query.token;
+    let user;
 
-    const cetak = [];
-    restaurant.results.forEach(element => {
-        cetak.push({
-            id: element.id,
-            name: element.name
-        })
-    });
-    res.status(200).send({
-        Famous: "diving",
-        Diving: cetak
-    });
+    if(!token)return res.status(401).send("Token not found");
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
+    }
+
+    const conn = await db.getConnection();
+    let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+    if(cek[0].api_hit > 0){
+        //UPDATE API_HIT
+        let temp = cek[0].api_hit-1;
+        let data = await db.executeQuery(conn,`update user set api_hit=${temp} where email = '${user.email}'`);
+
+        //CALL 3RDAPI
+        const country = req.query.country;
+        const restaurant = JSON.parse(await getRestaurant(country, "diving", 10));
+        const cetak = [];
+        restaurant.results.forEach(element => {
+            cetak.push({
+                id: element.id,
+                name: element.name
+            })
+        });
+        res.status(200).send({
+            Famous: "diving",
+            Diving: cetak
+        });
+    }
+    else res.status(400).send("API HIT HABIS!!!");
 });
 
 //=====================================================================================================================
@@ -161,7 +241,6 @@ router.delete("/reviewTour", async function(req, res){
         return res.status(401).send("Token Invalid");
     }
 
-    console.log(user.email);
     const conn = await db.getConnection();
     let cek = await db.executeQuery(conn,`select * from review where id_review = '${id_review}'`);
     if(cek.length > 0){
