@@ -1,4 +1,6 @@
 const express = require("express");
+const db = require("../models/db");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 router.use(express.urlencoded({extended:true}));
@@ -18,30 +20,29 @@ function getRestaurant(country, label, jumlah){
 }
 
 router.get("/api/getRestaurant/:country/:jumlah", async function(req, res){
-    //const country = JSON.parse(await getCountry(req.query.title));
-    if(req.params.country=="kosong"){
-        res.status(400).send({"msg" : "Restaurant dengan negara kosong tidak ditemukan :("});
-    }
-    else if(req.params.jumlah=="0"){
-        return res.status(404)
-        .send({"msg":`Tidak akan keluar response kalau jumlah 0`});
-    }
-    else {
-        // const restaurant = JSON.parse(await getRestaurant(req.query.country, req.query.label, req.query.jumlah));
+    // if(req.params.country=="kosong"){
+    //     res.status(400).send({"msg" : "Restaurant dengan negara kosong tidak ditemukan :("});
+    // }
+    // else if(req.params.jumlah=="0"){
+    //     return res.status(404)
+    //     .send({"msg":`Tidak akan keluar response kalau jumlah 0`});
+    // }
+    // else {
+        const restaurant = JSON.parse(await getRestaurant(req.query.country, req.query.label, req.query.jumlah));
 
-        // const cetak = [];
-        // restaurant.results.forEach(element => {
-        //     cetak.push({
-        //         id: element.id,
-        //         name: element.name
-        //     })
-        // });
-        // res.status(200).send(cetak);
-        res.status(200).send({
-            "id": "N__429735547",
-            "name": "Clärchens Ballhaus"
+        const cetak = [];
+        restaurant.results.forEach(element => {
+            cetak.push({
+                id: element.id,
+                name: element.name
+            })
         });
-    }
+        res.status(200).send(cetak);
+    //     res.status(200).send({
+    //         "id": "N__429735547",
+    //         "name": "Clärchens Ballhaus"
+    //     });
+    // }
 });
 
 
@@ -63,30 +64,30 @@ function getSimilarPlace(country, jumlah){
 }
 
 router.get("/api/getSimilarPlace/:country/:jumlah", async function(req, res){
-    if(req.params.country=="kosong"){
-        res.status(400).send({"msg" : "Tempat dengan negara kosong tidak ditemukan :("});
-    }
-    else if(req.params.jumlah=="0"){
-        return res.status(404)
-        .send({"msg":`Tidak akan keluar response kalau jumlah 0`});
-    }
-    else {
-        // const restaurant = JSON.parse(await getSimilarPlace(req.params.country, req.params.jumlah));
+    // if(req.params.country=="kosong"){
+    //     res.status(400).send({"msg" : "Tempat dengan negara kosong tidak ditemukan :("});
+    // }
+    // else if(req.params.jumlah=="0"){
+    //     return res.status(404)
+    //     .send({"msg":`Tidak akan keluar response kalau jumlah 0`});
+    // }
+    // else {
+        const restaurant = JSON.parse(await getSimilarPlace(req.params.country, req.params.jumlah));
 
-        // const cetak = [];
-        // restaurant.results.forEach(element => {
-        //     cetak.push({
-        //         id: element.id,
-        //         name: element.name
-        //     })
-        // });
-        // res.status(200).send(cetak);
-
-        res.status(200).send({
-            "id": "T__b98be764da47",
-            "name": "Ramen-Ya"
+        const cetak = [];
+        restaurant.results.forEach(element => {
+            cetak.push({
+                id: element.id,
+                name: element.name
+            })
         });
-    }
+        res.status(200).send(cetak);
+
+    //     res.status(200).send({
+    //         "id": "T__b98be764da47",
+    //         "name": "Ramen-Ya"
+    //     });
+    // }
 });
 
 //=====================================================================================================================
@@ -143,6 +144,40 @@ router.get("/api/getDiving", async function(req, res){
         Famous: "diving",
         Diving: cetak
     });
+});
+
+//=====================================================================================================================
+//DELETE REVIEW
+
+router.delete("/reviewTour", async function(req, res){
+    let token = req.query.token;
+    let id_review = req.body.id_review;
+    let user;
+
+    if(!token)return res.status(401).send("Token not found");
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
+    }
+
+    console.log(user.email);
+    const conn = await db.getConnection();
+    let cek = await db.executeQuery(conn,`select * from review where id_review = '${id_review}'`);
+    if(cek.length > 0){
+        if(cek[0].email == user.email){
+            let data = await db.executeQuery(conn,`delete from review where id_review = '${id_review}'`);
+            return res.status(200).send({
+                "nama_jenis" : cek[0].nama_jenis,
+                "jenis" : cek[0].jenis,
+                "comment" : cek[0].comment,
+                "rating" : cek[0].rating,
+                "message" : "Success Delete Review"
+            });
+        }
+        else return res.status(400).send("NOT YOUR REVIEW!!!!");
+    }
+    else return res.status(400).send("id_review NOT FOUND");
 });
 
 module.exports = router;
