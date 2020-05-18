@@ -322,6 +322,7 @@ router.get("/Halaman_TopUp_Saldo", async function(req,res){
     }
 });
 
+//redirect yang dilakukan setelah berhasil bayar
 router.post("/Tambah_Saldo", async function(req,res){
     
     let email = req.body.email;
@@ -339,6 +340,7 @@ router.post("/Tambah_Saldo", async function(req,res){
             
 });
 
+//harga subscribe 500.000
 router.post("/subscribe", async function(req,res){
     let email = req.body.email;
     let password = req.body.password;

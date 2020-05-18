@@ -1,73 +1,86 @@
-<html>
-   <head>
-      <title>Simple Snap Example</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <!-- <link rel="stylesheet" href="/static/checkout.css"> -->
-      <script type="text/javascript"
-            src="https://app.sandbox.midtrans.com/snap/snap.js"
-            data-client-key="<%= clientKey %>"></script>
-   </head>
-   <body>
-    <div class='cart'>
-      <input type='hidden' id='snap_token' value="<%= token %>"/>
-      <input type='hidden' id='email' value="<%= email %>"/>
-      <input type='hidden' id='jumlah' value="<%= jumlah %>"/>
-      <input type='hidden' id='password' value="<%= password %>"/>
-      <div class='popup'>
-        <div class='row header'>
-          <span>Top Up</span>
-          <span>Saldo</span><br>
-          <span>Email Pengguna : <%=email %></span>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="<%= clientKey %>"></script>
+    
+    <title>Pembayaran Top Up Saldo TravelKu</title>
+    <style>
+    body{
+        background-color: wheat;
+        background-size: cover;
+    }
+    </style>
+</head>
+<body style="margin-top: 10%;">
+    <div class='row' style="width:100%;">
+        <div class="col-md-4"></div>
+        <div class="col-md-4" style='border-radius:4px;min-height: 400px;opacity:0.8;background:black;margin-top:4%;'>
+            <br><center>
+            <div>
+              <input type='hidden' id='snap_token' value="<%= token %>"/>
+              <input type='hidden' id='email' value="<%= email %>"/>
+              <input type='hidden' id='jumlah' value="<%= jumlah %>"/>
+              <input type='hidden' id='password' value="<%= password %>"/>
+                <h1 style='color:white;'>Top-Up Saldo</h1>
+                <br>
+                <div class="form-group">
+                    <label for="username" style='color:white;'>Email Pengguna : <%=email %></label><br>
+                </div>
+                <div class="form-group" style="margin-top:-5%;">
+                    <label for="password" style='color:white;'>Jumlah Saldo Yang Ingin Ditambahkan : <%=jumlah %></label><br>
+                </div>
+                <button id="checkout" class="btn btn-outline-primary btn-md" style="width:40%; margin-top:-5%;">Checkout</button>
 
-        <div class='row items'>
-          <span>Jumlah Saldo Yang Ingin Ditambahkan : </span>
-          <span><%=jumlah %></span>
+
+            </center>
+            </div>
+            <br>
         </div>
-        <div class='row checkout'>
-          <span><a href='#'></a></span>
-          <button class='checkout-button'>Checkout</button>
-        </div>
+        <div class="col-md-4"></div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script>
-      function TambahSaldo(){
-          let params = {
-              "email" : $("#email").val(),
-              "password" : $("#password").val(),
-              "jumlah" : $("#jumlah").val()
-          };
-          $.ajax({
-              url : "http://localhost:3000/217116590/Tambah_Saldo",
-              method : "POST",
-              data : params,
-              success : function(data){
-                console.log("SUCCESS Update Database");
-              }
-          });
-      }
-      //pilih cara pembayaran dan midtrans
-      var token = document.querySelectorAll('#snap_token')[0].value;
 
-      var checkoutBtn = document.querySelectorAll('.checkout')[0];
-      checkoutBtn.onclick = function(){
-        console.log('opening snap popup:');
-        snap.pay(token, {
-          // Optional
-          onSuccess: function(result){
-            TambahSaldo();
-          },
-          // Optional
-          onPending: function(result){
-            TambahSaldo();
-          },
-          // Optional
-          onError: function(result){
-            TambahSaldo();
-          }
-        });
-      }
-    </script>
-   </body>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+   <script>
+     function TambahSaldo(){
+         let params = {
+             "email" : $("#email").val(),
+             "password" : $("#password").val(),
+             "jumlah" : $("#jumlah").val()
+         };
+         $.ajax({
+             url : "http://localhost:3000/217116590/Tambah_Saldo",
+             method : "POST",
+             data : params,
+             success : function(data){
+               console.log("SUCCESS Update Database");
+             }
+         });
+     }
+     //pilih cara pembayaran dan midtrans
+     var token = document.querySelectorAll('#snap_token')[0].value;
+
+     var checkoutBtn = document.querySelectorAll('#checkout')[0];
+     checkoutBtn.onclick = function(){
+       console.log('opening snap popup:');
+       snap.pay(token, {
+         // Optional
+         onSuccess: function(result){
+           TambahSaldo();
+           alert("Tambah Saldo Berhasil");
+         },
+         // Optional
+         onPending: function(result){
+           alert("Tambah Saldo Pending");
+         },
+         // Optional
+         onError: function(result){
+           alert("Tambah Saldo Error");
+         }
+       });
+     }
+   </script>
+</body>
 </html>
