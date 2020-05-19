@@ -1,94 +1,155 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-var request = require('request');
+const db = require("../models/db");
 
 router.use(express.urlencoded({extended:true}));
 
 //13 cari lokasi terkenal pake lat long
 router.get("/lokasi_terkenal",async function(req,res){
     var lokasi = req.query.lokasi;
-    try {
-        var tempat = await lokasi_ke_latlon(lokasi);
-        try {
-            var hasil = await lokasi_terkenal(tempat.lat,tempat.long);
-            hasil = hasil.results[0];
-            tempat = [];
-            for (let i = 0; i < hasil.pois.length; i++) {
-                const element = hasil.pois[i];
-                
-                tempat.push({"nama":element.name,"deksripsi":element.snippet});
-            }            
-            res.send(tempat);
-        } catch (error) {
-            console.log(error)
-        }
-    } catch (error){
-        res.status(400).send(error)
+    var token = req.query.token;
+    console.log(token);
+    if(!token)return res.status(401).send("Token not found");
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
     }
+    const conn = await db.getConnection();
+    let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+    let jum_api = parseInt(cek[0].api_hit);
+    console.log(jum_api);
+    if(jum_api-1>=0){
+        try {
+            var tempat = await lokasi_ke_latlon(lokasi);
+            try {
+                var hasil = await lokasi_terkenal(tempat.lat,tempat.long);
+                hasil = hasil.results[0];
+                tempat = [];
+                for (let i = 0; i < hasil.pois.length; i++) {
+                    const element = hasil.pois[i];
+                    tempat.push({"nama":element.name,"deksripsi":element.snippet});
+                }
+                jum_api=jum_api-1;
+                var result = await db.executeQuery(conn, `update user set api_hit = ${jum_api} where email='${user.email}'`);
+                return res.status(200).send(tempat);
+            } catch (error) {
+                console.log(error)
+            }
+        } catch (error){
+            res.status(400).send(error)
+        }
+    }
+    else res.status(400).send("Kuota API sudah habis, mohon isi ulang");
 });
 //14 dapat mengatur holiday plan selama 3 hari - day planner
 router.get("/planner",async function(req,res){
     var lokasi = req.query.lokasi;
     var mulai = req.query.mulai;
     var selesai = req.query.selesai;
-    try {
-        var hasil = await planner(mulai,selesai,lokasi);
-        hasil = hasil.results[0];
-        console.log(hasil)
-        plan= [];
-        hasil.days.forEach(e=>{
-            temp=[];
-            e.itinerary_items.forEach(el=>{
-                temp.push({"kegiatan":el.title,"nama":el.poi.name,"deskripsi":el.description})
-            });
-            console.log(temp)
-            plan.push({"tanggal":e.date,"isi":temp});
-        });      
-        console.log(plan);  
-        res.send(plan);
-            
-    } catch (error){
-        res.status(400).send(error)
+    var token = req.query.token;
+    if(!token)return res.status(401).send("Token not found");
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
     }
+    const conn = await db.getConnection();
+    let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+    let jum_api = parseInt(cek[0].api_hit);
+    if(jum_api-1>=0){
+        try {
+            var hasil = await planner(mulai,selesai,lokasi);
+            hasil = hasil.results[0];
+            console.log(hasil)
+            plan= [];
+            hasil.days.forEach(e=>{
+                temp=[];
+                e.itinerary_items.forEach(el=>{
+                    temp.push({"kegiatan":el.title,"nama":el.poi.name,"deskripsi":el.description})
+                });
+                console.log(temp)
+                plan.push({"tanggal":e.date,"isi":temp});
+            });      
+            console.log(plan);  
+            jum_api=jum_api-1;
+            var result = await db.executeQuery(conn, `update user set api_hit = ${jum_api} where email='${user.email}'`);
+            res.send(plan);                
+        } catch (error){
+            res.status(400).send(error)
+        }
+    }
+    else res.status(400).send("Kuota API sudah habis, mohon isi ulang");
 });
 //15
 router.get("/aktifitas_terkenal",async function(req,res){
     var lokasi = req.query.lokasi;
-    try {
-        var tempat = await lokasi_ke_latlon(lokasi);
-        try {
-            var hasil = await aktifitas_terkenal(tempat.lat,tempat.long);
-            hasil = hasil.results[0].scores;
-            aktifitas = [];
-            for (let i = 0; i < hasil.length; i++) {
-                const element = hasil[i];
-                aktifitas.push({"aktifitas":element.tag_label,"jumlah":element.count});
-            }            
-            res.send(aktifitas);
-        } catch (error) {
-            console.log(error)
-        }
-    } catch (error){
-        res.status(400).send(error)
+    var token = req.query.token;
+    if(!token)return res.status(401).send("Token not found");
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
     }
+    const conn = await db.getConnection();
+    let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+    let jum_api = parseInt(cek[0].api_hit);
+    if(jum_api-1>=0){
+        try {
+            var tempat = await lokasi_ke_latlon(lokasi);
+            try {
+                var hasil = await aktifitas_terkenal(tempat.lat,tempat.long);
+                hasil = hasil.results[0].scores;
+                aktifitas = [];
+                for (let i = 0; i < hasil.length; i++) {
+                    const element = hasil[i];
+                    aktifitas.push({"aktifitas":element.tag_label,"jumlah":element.count});
+                }
+                jum_api=jum_api-1;
+                var result = await db.executeQuery(conn, `update user set api_hit = ${jum_api} where email='${user.email}'`);            
+                res.send(aktifitas);
+            } catch (error) {
+                console.log(error)
+            }
+        } catch (error){
+            res.status(400).send(error)
+        }
+    }
+    else res.status(400).send("Kuota API sudah habis, mohon isi ulang");
 });
 //16cari poi terkenal lokasi
 router.get("/poi_terkenal",async function(req,res){
     var lokasi = req.query.lokasi;
-    try {
-        var hasil = await poi_terkenal(lokasi);
-        hasil = hasil.results;
-        console.log(hasil)
-        poi= [];
-        hasil.forEach(e=>{
-            poi.push({"nama":e.name,"deskripsi":e.snippet});
-        });      
-        console.log(poi);  
-        res.send(poi);
-    } catch (error){
-        res.status(400).send(error)
+    var token = req.query.token;
+    if(!token)return res.status(401).send("Token not found");
+    try{
+        user = jwt.verify(token,"proyek_uas");
+    }catch(err){
+        return res.status(401).send("Token Invalid");
     }
+    const conn = await db.getConnection();
+    let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+    let jum_api = parseInt(cek[0].api_hit);
+    if(jum_api-1>=0){
+        try {
+            var hasil = await poi_terkenal(lokasi);
+            hasil = hasil.results;
+            console.log(hasil)
+            poi= [];
+            hasil.forEach(e=>{
+                poi.push({"nama":e.name,"deskripsi":e.snippet});
+            });      
+            console.log(poi);
+            jum_api=jum_api-1;
+            var result = await db.executeQuery(conn, `update user set api_hit = ${jum_api} where email='${user.email}'`);  
+            return res.status(200).send(poi);
+        } catch (error){
+            console.log(error);
+            return res.status(400).send(error)
+        }
+    }
+    else res.status(400).send("Kuota API sudah habis, mohon isi ulang");
 });
 
 //api kosmas
