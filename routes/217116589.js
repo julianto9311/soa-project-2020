@@ -105,15 +105,14 @@ router.post("/login",async function(req,res){
     }
 });
 
-router.put("/edit_user",async function(req,res){
+router.put("/edit_user",uploads.single("profil_picture"),async function(req,res){
     let email=req.body.email;
-    let username=req.body.username;
     let nama_lengkap=req.body.nama_lengkap; 
     let nomor_hp=req.body.nomor_hp;
     let password=req.body.password;
     let newpassword=req.body.newpassword;
 
-    if(!password || !username || !nama_lengkap || !nomor_hp || !email){
+    if(!password || !nama_lengkap || !nomor_hp || !email){
         return res.status(400).send({
             "message":"data ada yang kosong"
         });
@@ -121,13 +120,24 @@ router.put("/edit_user",async function(req,res){
     else{
         const conn=await db.getConnection();
         try {
+            let profil_picture=req.file;
             const data_user = await db.executeQuery(conn,`select * from user where email='${email}' and password='${password}'`);
             if(data_user.length>0){
                 if(!newpassword){
-                    const update = await db.executeQuery(conn,`update user set username='${username}',nama_lengkap='${nama_lengkap}',nomor_hp='${nomor_hp}' where email='${email}'`);
+                    if(!profil_picture){
+                        const update = await db.executeQuery(conn,`update user set nama_lengkap='${nama_lengkap}',nomor_hp='${nomor_hp}' where email='${email}'`);
+                    }
+                    else{
+                        const update = await db.executeQuery(conn,`update user set nama_lengkap='${nama_lengkap}',nomor_hp='${nomor_hp}',gambar='${profil_picture.filename}' where email='${email}'`);
+                    }
                 }
                 else{
-                    const update = await db.executeQuery(conn,`update user set username='${username}',nama_lengkap='${nama_lengkap}',nomor_hp='${nomor_hp}',password='${newpassword}' where email='${email}'`);
+                    if(!profil_picture){
+                        const update = await db.executeQuery(conn,`update user set nama_lengkap='${nama_lengkap}',nomor_hp='${nomor_hp}',password='${newpassword}' where email='${email}'`);
+                    }
+                    else{
+                        const update = await db.executeQuery(conn,`update user set nama_lengkap='${nama_lengkap}',nomor_hp='${nomor_hp}',password='${newpassword}',gambar='${profil_picture.filename}' where email='${email}'`);
+                    }
                 }
                 conn.release();
                 return res.status(200).send({
