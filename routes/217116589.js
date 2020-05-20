@@ -4,8 +4,22 @@ const db=require("../models/db");
 const jwt = require("jsonwebtoken");
 var request = require('request');
 router.use(express.urlencoded({extended:true}));
+const multer=require("multer");
+const storage=multer.diskStorage({
+    destination:function(req,file,callback){
+        callback(null,"./uploads");
+    },
+    filename:function(req,file,callback) {
+        const filename=file.originalname.split(".");
+        const extension=filename[1];
+        callback(null,Date.now()+"."+extension);
+    }
+});
+const uploads=multer({
+    storage:storage
+});
 
-router.post("/register",async function(req,res){
+router.post("/register",uploads.single("profil_picture"),async function(req,res){
     let email=req.body.email;
     let nama_lengkap=req.body.nama_lengkap; 
     let nomor_hp=req.body.nomor_hp;
@@ -19,19 +33,38 @@ router.post("/register",async function(req,res){
     else{
         const conn=await db.getConnection();
         try {
-            const data_user = await db.executeQuery(conn,`select * from user where email='${email}'`);
-            if(data_user.length>0){
-                conn.release();
-                return res.status(400).send({
-                    "message":"email pernah digunakan"
-                });
+            let profil_picture=req.file;
+            if(!profil_picture){
+                const data_user = await db.executeQuery(conn,`select * from user where email='${email}'`);
+                if(data_user.length>0){
+                    conn.release();
+                    return res.status(400).send({
+                        "message":"email pernah digunakan"
+                    });
+                }
+                else{
+                    const insert = await db.executeQuery(conn,`insert into user values(${null},'${email}','${nama_lengkap}','${nomor_hp}','${password}',0,0,10,"default.jpg")`);
+                    conn.release();
+                    return res.status(200).send({
+                        "message":"berhasil register"
+                    });
+                }
             }
             else{
-                const insert = await db.executeQuery(conn,`insert into user values(${null},'${email}','${nama_lengkap}','${nomor_hp}','${password}',0,0,10)`);
-                conn.release();
-                return res.status(200).send({
-                    "message":"berhasil register"
-                });
+                const data_user = await db.executeQuery(conn,`select * from user where email='${email}'`);
+                if(data_user.length>0){
+                    conn.release();
+                    return res.status(400).send({
+                        "message":"email pernah digunakan"
+                    });
+                }
+                else{
+                    const insert = await db.executeQuery(conn,`insert into user values(${null},'${email}','${nama_lengkap}','${nomor_hp}','${password}',0,0,10,'${profil_picture.filename}')`);
+                    conn.release();
+                    return res.status(200).send({
+                        "message":"berhasil register"
+                    });
+                }
             }
         } catch (error) {
             return res.status(500).send(error);
