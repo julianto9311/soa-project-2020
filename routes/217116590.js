@@ -6,7 +6,7 @@ const router = express.Router();
 const midtransClient = require('midtrans-client');
 router.use(express.urlencoded({extended:true}));
 
-router.get("/article", function(req,res){
+router.get("/article", async function(req,res){
     let kota = req.query.kota;
 
     let token = req.query.token;
@@ -64,7 +64,7 @@ router.get("/article", function(req,res){
     }
 });
 
-router.get("/city_walk", function(req,res){
+router.get("/city_walk", async function(req,res){
     let kota = req.query.kota;
     let waktu = req.query.waktu;
     
@@ -139,7 +139,7 @@ router.get("/city_walk", function(req,res){
     }
 });
 
-router.get("/tour", function(req,res){
+router.get("/tour", async function(req,res){
     let kota = req.query.kota;
     let kegiatan = req.query.kegiatan;
     let params;
@@ -210,7 +210,7 @@ router.get("/tour", function(req,res){
     }
 });
 
-router.get("/tour/:id", function(req,res){
+router.get("/tour/:id", async function(req,res){
     let id = req.params.id;
     let token = req.query.token;
     let user;
