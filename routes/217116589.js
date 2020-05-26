@@ -92,7 +92,11 @@ router.post("/login",async function(req,res){
                     "email":email,
                     "tipe_user": parseInt(data_user[0].tipe_user)
                 },"proyek_uas");
-                res.status(200).send(token);
+                res.status(200).send(
+                    {
+                        "token":token
+                    }
+                );
             }
             else{
                 return res.status(400).send({
