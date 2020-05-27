@@ -10,7 +10,7 @@ function getRestaurant(country, label, jumlah){
         var request = require('request');
         var options = {
             'method': 'GET',
-            'url': `https://www.triposo.com/api/20200405/poi.json?tag_labels=${label}&location_id=${country}&count=${jumlah}&order_by=-score&fields=name,id&token=owymkzfrhejlzq2psl0k0otvyvrczhyi&account=LNPHPM5C`
+            'url': `https://www.triposo.com/api/20200405/poi.json?tag_labels=${label}&location_id=${country}&count=${jumlah}&order_by=-score&fields=name,id&token=${process.env.FERED_TRIPOSO_TOKEN}&account=${process.env.FERED_TRIPOSO_ACCID}`
         };
         request(options, function (error, response) { 
             if (error) reject (new Error(error));
@@ -75,7 +75,7 @@ function getSimilarPlace(country, jumlah){
         var request = require('request');
         var options = {
             'method': 'GET',
-            'url': `https://www.triposo.com/api/20200405/poi.json?location_id=${country}&count=${jumlah}&annotate=similarity:T__389cda256332&order_by=-similarity&fields=name,id&token=owymkzfrhejlzq2psl0k0otvyvrczhyi&account=LNPHPM5C`
+            'url': `https://www.triposo.com/api/20200405/poi.json?location_id=${country}&count=${jumlah}&annotate=similarity:T__389cda256332&order_by=-similarity&fields=name,id&token=${process.env.FERED_TRIPOSO_TOKEN}&account=${process.env.FERED_TRIPOSO_ACCID}`
         };
         request(options, function (error, response) { 
             if (error) reject (new Error(error));
@@ -140,7 +140,7 @@ function getFoodDrink(country){
         var request = require('request');
         var options = {
             'method': 'GET',
-            'url': `https://www.triposo.com/api/20200405/tag.json?location_id=${country}&ancestor_label=cuisine&order_by=-score&fields=name,label&token=owymkzfrhejlzq2psl0k0otvyvrczhyi&account=LNPHPM5C`
+            'url': `https://www.triposo.com/api/20200405/tag.json?location_id=${country}&ancestor_label=cuisine&order_by=-score&fields=name,label&token=${process.env.FERED_TRIPOSO_TOKEN}&account=${process.env.FERED_TRIPOSO_ACCID}`
         };
         request(options, function (error, response) { 
             if (error) reject (new Error(error));
