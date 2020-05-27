@@ -2,6 +2,7 @@ const express = require("express");
 const request = require('request');
 const db = require("../models/db");
 const jwt = require("jsonwebtoken");
+const numeral = require('numeral');
 const router = express.Router();
 const midtransClient = require('midtrans-client');
 router.use(express.urlencoded({extended:true}));
@@ -251,7 +252,8 @@ router.get("/tour/:id", async function(req,res){
                             let orang = element.price_is_per_person == true ? "Ya" : "Tidak";
                             hasil.push({
                                 Nama_Tour: element.name,
-                                Harga: element.price.currency + " " + element.price.amount,
+                                // Harga: element.price.currency + " " + element.price.amount,
+                                Harga: "Rp. " + numeral(parseInt(element.price.amount) * 16260).format('0,0'),
                                 Harga_Per_Orang: orang,
                                 URL: element.vendor_tour_url,
                                 Deskripsi: element.intro,
