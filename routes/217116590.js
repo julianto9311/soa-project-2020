@@ -2,6 +2,7 @@ const express = require("express");
 const request = require('request');
 const db = require("../models/db");
 const jwt = require("jsonwebtoken");
+const numeral = require('numeral');
 const router = express.Router();
 const midtransClient = require('midtrans-client');
 router.use(express.urlencoded({extended:true}));
@@ -29,8 +30,8 @@ router.get("/article", async function(req,res){
                 conn.release();
 
                 let params = {
-                    account: '9ENBBSQ4',
-                    token: 'rsw63pdoiak7hm9ki4nwt4angm9ul34t',
+                    account: process.env.JULI_TRIPOSO_ACCID,
+                    token: process.env.JULI_TRIPOSO_TOKEN,
                     fields: 'name,intro',
                     order_by: '-score',
                     location_ids: kota,
@@ -88,8 +89,8 @@ router.get("/city_walk", async function(req,res){
                 conn.release();
 
                 let params = {
-                    account: '9ENBBSQ4',
-                    token: 'rsw63pdoiak7hm9ki4nwt4angm9ul34t',
+                    account: process.env.JULI_TRIPOSO_ACCID,
+                    token: process.env.JULI_TRIPOSO_TOKEN,
                     location_id: kota,
                     tag_labels: 'sightseeing',
                     total_time: waktu,
@@ -165,8 +166,8 @@ router.get("/tour", async function(req,res){
 
                 if(kegiatan){
                     params = {
-                        account: '9ENBBSQ4',
-                        token: 'rsw63pdoiak7hm9ki4nwt4angm9ul34t',
+                        account: process.env.JULI_TRIPOSO_ACCID,
+                        token: process.env.JULI_TRIPOSO_TOKEN,
                         fields: 'id,name',
                         order_by: '-score',
                         location_ids: kota,
@@ -175,8 +176,8 @@ router.get("/tour", async function(req,res){
                 }
                 else{
                     params = {
-                        account: '9ENBBSQ4',
-                        token: 'rsw63pdoiak7hm9ki4nwt4angm9ul34t',
+                        account: process.env.JULI_TRIPOSO_ACCID,
+                        token: process.env.JULI_TRIPOSO_TOKEN,
                         fields: 'id,name',
                         order_by: '-score',
                         location_ids: kota
@@ -232,8 +233,8 @@ router.get("/tour/:id", async function(req,res){
                 conn.release();
 
                 let params = {
-                    account: '9ENBBSQ4',
-                    token: 'rsw63pdoiak7hm9ki4nwt4angm9ul34t',
+                    account: process.env.JULI_TRIPOSO_ACCID,
+                    token: process.env.JULI_TRIPOSO_TOKEN,
                     fields: 'name,price,vendor_tour_url,intro,price_is_per_person',
                     order_by: '-score',
                     id: id
@@ -251,7 +252,8 @@ router.get("/tour/:id", async function(req,res){
                             let orang = element.price_is_per_person == true ? "Ya" : "Tidak";
                             hasil.push({
                                 Nama_Tour: element.name,
-                                Harga: element.price.currency + " " + element.price.amount,
+                                // Harga: element.price.currency + " " + element.price.amount,
+                                Harga: "Rp. " + numeral(parseInt(element.price.amount) * 16260).format('0,0'),
                                 Harga_Per_Orang: orang,
                                 URL: element.vendor_tour_url,
                                 Deskripsi: element.intro,
@@ -270,10 +272,11 @@ router.get("/tour/:id", async function(req,res){
     }
 });
 
-router.post("/reviewTour", async function(req,res){
+router.post("/review", async function(req,res){
     let token = req.query.token;
     let id_jenis = req.body.id;
     let nama_jenis = req.body.nama;
+    let jenis = req.body.jenis;
     let comment = req.body.comment;
     let rating = req.body.rating;
     let user;
@@ -284,7 +287,7 @@ router.post("/reviewTour", async function(req,res){
     }catch(err){
         return res.status(401).send("Token Invalid");
     }
-    if(id_jenis==""||nama_jenis==""||comment==""||rating=="")return res.status(400).send({message: "Field ada yang kosong"});
+    if(id_jenis==""||nama_jenis==""||jenis==""||comment==""||rating=="")return res.status(400).send({message: "Field ada yang kosong"});
     else{
         const conn = await db.getConnection();
         let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
@@ -293,7 +296,7 @@ router.post("/reviewTour", async function(req,res){
                 if(parseInt(cek[0].api_hit) - 1 >= 0){
                     let api_hit = parseInt(cek[0].api_hit) - 1;
                     let update = await db.executeQuery(conn,`update user set api_hit = ${api_hit} where email = '${user.email}'`);
-                    let insert = await db.executeQuery(conn,`insert into review values('','${user.email}','${id_jenis}','${nama_jenis}','Tour','${comment}',${rating})`);
+                    let insert = await db.executeQuery(conn,`insert into review values('','${user.email}','${id_jenis}','${nama_jenis}','${jenis}','${comment}',${rating})`);
                     conn.release();
                     return res.status(200).send({message: "Review berhasil ditambahkan"});
                 }
@@ -305,7 +308,7 @@ router.post("/reviewTour", async function(req,res){
     }
 });
 
-router.get("/reviewTour", async function(req,res){
+router.get("/review", async function(req,res){
     let token = req.query.token;
     let user;
 
@@ -340,7 +343,7 @@ router.get("/reviewTour", async function(req,res){
     else return res.status(400).send({message: "User tidak ditemukan"});
 });
 
-router.get("/reviewTour/:id", async function(req,res){
+router.get("/review/:id", async function(req,res){
     let tour = req.params.id;
     let token = req.query.token;
     let user;
