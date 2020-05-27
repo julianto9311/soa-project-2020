@@ -1,10 +1,15 @@
 const mysql = require("mysql");
 
 const pool = mysql.createPool({
-    host: "localhost",
-    database: "proyek_soa",
-    user: "root",
-    password: ""
+    // host: "localhost",
+    // database: "proyek_soa",
+    // user: "root",
+    // password: ""
+    host: "sql12.freemysqlhosting.net",
+    database: "sql12343602",
+    user: "sql12343602",
+    password: "YdEhYiIYPS",
+    port:3306
 });
 
 function executeQuery(conn, query) {
