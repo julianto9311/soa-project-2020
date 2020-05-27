@@ -11,6 +11,6 @@ app.use("/217116589/",require("./routes/217116589"));
 app.use("/217116590/",require("./routes/217116590"));
 app.use("/217116595/",require("./routes/217116595"));
 
-app.listen(80, function(){
-    console.log("Listening to port 80");
+app.listen(process.env.PORT, function(){
+    console.log("Listening to port"+process.env.PORT);
 });

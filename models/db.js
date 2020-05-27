@@ -5,11 +5,11 @@ const pool = mysql.createPool({
     // database: "proyek_soa",
     // user: "root",
     // password: ""
-    host: "sql12.freemysqlhosting.net",
-    database: "sql12343602",
-    user: "sql12343602",
-    password: "YdEhYiIYPS",
-    port:3306
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT
 });
 
 function executeQuery(conn, query) {
