@@ -242,21 +242,25 @@ router.delete("/reviewTour", async function(req, res){
     }
 
     const conn = await db.getConnection();
-    let cek = await db.executeQuery(conn,`select * from review where id_review = '${id_review}'`);
-    if(cek.length > 0){
-        if(cek[0].email == user.email){
-            let data = await db.executeQuery(conn,`delete from review where id_review = '${id_review}'`);
-            return res.status(200).send({
-                "nama_jenis" : cek[0].nama_jenis,
-                "jenis" : cek[0].jenis,
-                "comment" : cek[0].comment,
-                "rating" : cek[0].rating,
-                "message" : "Success Delete Review"
-            });
+    let cekPremium = await db.executeQuery(conn,`select * from user where tipe_user = 1 and email = '${user.email}'`);
+    if(cekPremium.length > 0){
+        let cek = await db.executeQuery(conn,`select * from review where id_review = '${id_review}'`);
+        if(cek.length > 0){
+            if(cek[0].email == user.email){
+                let data = await db.executeQuery(conn,`delete from review where id_review = '${id_review}'`);
+                return res.status(200).send({
+                    "nama_jenis" : cek[0].nama_jenis,
+                    "jenis" : cek[0].jenis,
+                    "comment" : cek[0].comment,
+                    "rating" : cek[0].rating,
+                    "message" : "Success Delete Review"
+                });
+            }
+            else return res.status(400).send("NOT YOUR REVIEW!!!!");
         }
-        else return res.status(400).send("NOT YOUR REVIEW!!!!");
+        else return res.status(400).send("id_review NOT FOUND");
     }
-    else return res.status(400).send("id_review NOT FOUND");
+    else return res.status(400).send("User Not Premium!!!");
 });
 
 module.exports = router;
