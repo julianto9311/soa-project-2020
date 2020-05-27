@@ -246,7 +246,7 @@ router.get("/get_Top_city_in_country",async function(req,res){
     }
     else{
         try {
-            let data_top_city=JSON.parse(await get_Top_city_in_country('owymkzfrhejlzq2psl0k0otvyvrczhyi','LNPHPM5C',negara));
+            let data_top_city=JSON.parse(await get_Top_city_in_country(process.env.FERED_TRIPOSO_TOKEN,process.env.FERED_TRIPOSO_ACCID,negara));
             data_top_city.results.forEach(element => {
                 if(element.name.toUpperCase().includes(kota_yang_dicari.toUpperCase())){
                     hasil.push({
