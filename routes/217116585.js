@@ -153,12 +153,12 @@ router.get("/poi_terkenal",async function(req,res){
 });
 
 //api kosmas
-const token_triposo_cosmas = "1kkv941t1156p94jxfpa7n9aobk0sy2p";
-const acc_id_cosmas = "PHF5YXPM";
+const token_triposo_cosmas = process.env.COSMAS_TRIPOSO_TOKEN;
+const acc_id_cosmas = process.env.COSMAS_TRIPOSO_ACCID;
 //api buat convert nama tempat jadi lat long
 function lokasi_ke_latlon(nama_lokasi){
     return new Promise(function(resolve,reject){
-        var geocode_key ="321522618001743309683x5873";
+        var geocode_key =process.env.COSMAS_GEOCODE;
         var url=`https://geocode.xyz/?locate=${nama_lokasi}&geoit=JSON&auth=${geocode_key}`;
         var request = require('request');
         var options = {

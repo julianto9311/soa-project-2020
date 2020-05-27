@@ -432,7 +432,6 @@ router.post("/Tambah_Saldo", async function(req,res){
         let cek = await db.executeQuery(conn,`select * from user where email = '${email}' and password = '${password}'`);
         let saldo = parseInt(cek[0].saldo) + parseInt(jumlah);
         let update = await db.executeQuery(conn,`update user set saldo = ${saldo} where email = '${email}'`);
-        return res.status(200).send("Saldo berhasil terisi");
         conn.release();
     } catch (error) {
         return res.status(500).send(error);
