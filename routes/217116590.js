@@ -437,7 +437,7 @@ router.post("/Tambah_Saldo", async function(req,res){
         let update = await db.executeQuery(conn,`update user set saldo = ${saldo} where email = '${email}'`);
         conn.release();
     } catch (error) {
-        return res.status(500).send(error);
+        return res.status(500).send({message: "Topup gagal"});
     }
             
 });
