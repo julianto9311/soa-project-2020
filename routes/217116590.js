@@ -158,54 +158,48 @@ router.get("/tour", async function(req,res){
     else{
         const conn = await db.getConnection();
         let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+        conn.release();
         if(cek.length > 0){
-            if(parseInt(cek[0].api_hit) - 1 >= 0){
-                let api_hit = parseInt(cek[0].api_hit) - 1;
-                let update = await db.executeQuery(conn,`update user set api_hit = ${api_hit} where email = '${user.email}'`);
-                conn.release();
-
-                if(kegiatan){
-                    params = {
-                        account: process.env.JULI_TRIPOSO_ACCID,
-                        token: process.env.JULI_TRIPOSO_TOKEN,
-                        fields: 'id,name',
-                        order_by: '-score',
-                        location_ids: kota,
-                        tag_labels: kegiatan
-                    };
-                }
-                else{
-                    params = {
-                        account: process.env.JULI_TRIPOSO_ACCID,
-                        token: process.env.JULI_TRIPOSO_TOKEN,
-                        fields: 'id,name',
-                        order_by: '-score',
-                        location_ids: kota
-                    };
-                }
-                let options = {
-                    url:'https://www.triposo.com/api/20200405/tour.json',
-                    method: 'GET',
-                    qs:params
+            if(kegiatan){
+                params = {
+                    account: process.env.JULI_TRIPOSO_ACCID,
+                    token: process.env.JULI_TRIPOSO_TOKEN,
+                    fields: 'id,name',
+                    order_by: '-score',
+                    location_ids: kota,
+                    tag_labels: kegiatan
                 };
-                try {
-                    request(options, function (error, response) {
-                        let temp = JSON.parse(response.body);
-                        let hasil = [];
-                        temp.results.forEach(element => {
-                            hasil.push({
-                                ID_Tour: element.id,
-                                Nama_Tour: element.name
-                            });
-                        });
-                        if(hasil.length>0)res.status(200).send(hasil);
-                        else res.status(400).send({Message:"Tour tidak ditemukan"});
-                    });
-                } catch (error) {
-                    res.status(500).send(error);
-                }
             }
-            else return res.status(400).send({message: "Api hit tidak cukup"});
+            else{
+                params = {
+                    account: process.env.JULI_TRIPOSO_ACCID,
+                    token: process.env.JULI_TRIPOSO_TOKEN,
+                    fields: 'id,name',
+                    order_by: '-score',
+                    location_ids: kota
+                };
+            }
+            let options = {
+                url:'https://www.triposo.com/api/20200405/tour.json',
+                method: 'GET',
+                qs:params
+            };
+            try {
+                request(options, function (error, response) {
+                    let temp = JSON.parse(response.body);
+                    let hasil = [];
+                    temp.results.forEach(element => {
+                        hasil.push({
+                            ID_Tour: element.id,
+                            Nama_Tour: element.name
+                        });
+                    });
+                    if(hasil.length>0)res.status(200).send(hasil);
+                    else res.status(400).send({Message:"Tour tidak ditemukan"});
+                });
+            } catch (error) {
+                res.status(500).send(error);
+            }
         }
         else return res.status(400).send({message: "User tidak ditemukan"});
     }
@@ -226,47 +220,41 @@ router.get("/tour/:id", async function(req,res){
     else{
         const conn = await db.getConnection();
         let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
+        conn.release();
         if(cek.length > 0){
-            if(parseInt(cek[0].api_hit) - 1 >= 0){
-                let api_hit = parseInt(cek[0].api_hit) - 1;
-                let update = await db.executeQuery(conn,`update user set api_hit = ${api_hit} where email = '${user.email}'`);
-                conn.release();
-
-                let params = {
-                    account: process.env.JULI_TRIPOSO_ACCID,
-                    token: process.env.JULI_TRIPOSO_TOKEN,
-                    fields: 'name,price,vendor_tour_url,intro,price_is_per_person',
-                    order_by: '-score',
-                    id: id
-                };
-                let options = {
-                    url:'https://www.triposo.com/api/20200405/tour.json',
-                    method: 'GET',
-                    qs:params
-                };
-                try {
-                    request(options, function (error, response) {
-                        let temp = JSON.parse(response.body);
-                        let hasil = [];
-                        temp.results.forEach(element => {
-                            let orang = element.price_is_per_person == true ? "Ya" : "Tidak";
-                            hasil.push({
-                                Nama_Tour: element.name,
-                                // Harga: element.price.currency + " " + element.price.amount,
-                                Harga: "Rp. " + numeral(parseInt(element.price.amount) * 16260).format('0,0'),
-                                Harga_Per_Orang: orang,
-                                URL: element.vendor_tour_url,
-                                Deskripsi: element.intro,
-                            });
+            let params = {
+                account: process.env.JULI_TRIPOSO_ACCID,
+                token: process.env.JULI_TRIPOSO_TOKEN,
+                fields: 'name,price,vendor_tour_url,intro,price_is_per_person',
+                order_by: '-score',
+                id: id
+            };
+            let options = {
+                url:'https://www.triposo.com/api/20200405/tour.json',
+                method: 'GET',
+                qs:params
+            };
+            try {
+                request(options, function (error, response) {
+                    let temp = JSON.parse(response.body);
+                    let hasil = [];
+                    temp.results.forEach(element => {
+                        let orang = element.price_is_per_person == true ? "Ya" : "Tidak";
+                        hasil.push({
+                            Nama_Tour: element.name,
+                            // Harga: element.price.currency + " " + element.price.amount,
+                            Harga: "Rp. " + numeral(parseInt(element.price.amount) * 16260).format('0,0'),
+                            Harga_Per_Orang: orang,
+                            URL: element.vendor_tour_url,
+                            Deskripsi: element.intro,
                         });
-                        if(hasil.length>0)res.status(200).send(hasil);
-                        else res.status(404).send({Message:"Tour tidak ditemukan"});
                     });
-                } catch (error) {
-                    res.status(400).send(error);
-                }
+                    if(hasil.length>0)res.status(200).send(hasil);
+                    else res.status(404).send({Message:"Tour tidak ditemukan"});
+                });
+            } catch (error) {
+                res.status(400).send(error);
             }
-            else return res.status(400).send({message: "Api hit tidak cukup"});
         }
         else return res.status(400).send({message: "User tidak ditemukan"});
     }
