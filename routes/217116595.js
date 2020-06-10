@@ -256,11 +256,11 @@ router.delete("/reviewTour", async function(req, res){
                     "message" : "Success Delete Review"
                 });
             }
-            else return res.status(400).send("NOT YOUR REVIEW!!!!");
+            else return res.status(403).send("NOT YOUR REVIEW!!!!");
         }
-        else return res.status(400).send("id_review NOT FOUND");
+        else return res.status(404).send("id_review NOT FOUND");
     }
-    else return res.status(400).send("User Not Premium!!!");
+    else return res.status(403).send("User Not Premium!!!");
 });
 
 module.exports = router;

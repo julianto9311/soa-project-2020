@@ -45,7 +45,7 @@ router.post("/register",uploads.single("profil_picture"),async function(req,res)
                 else{
                     const insert = await db.executeQuery(conn,`insert into user values(${null},'${email}','${nama_lengkap}','${nomor_hp}','${password}',0,0,10,"default.jpg")`);
                     conn.release();
-                    return res.status(200).send({
+                    return res.status(201).send({
                         "message":"berhasil register"
                     });
                 }
@@ -61,7 +61,7 @@ router.post("/register",uploads.single("profil_picture"),async function(req,res)
                 else{
                     const insert = await db.executeQuery(conn,`insert into user values(${null},'${email}','${nama_lengkap}','${nomor_hp}','${password}',0,0,10,'${profil_picture.filename}')`);
                     conn.release();
-                    return res.status(200).send({
+                    return res.status(201).send({
                         "message":"berhasil register"
                     });
                 }
@@ -276,7 +276,7 @@ router.get("/get_Top_city_in_country",async function(req,res){
                 });
             }
         } catch (error) {
-            res.status(500).send(error);
+            res.status(400).send(error);
         }
     }
 });

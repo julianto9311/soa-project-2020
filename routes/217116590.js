@@ -53,10 +53,10 @@ router.get("/article", async function(req,res){
                             });
                         });
                         if(hasil.length>0)res.status(200).send(hasil);
-                        else res.status(400).send({Message:"Perayaan tidak ditemukan"});
+                        else res.status(404).send({Message:"Perayaan tidak ditemukan"});
                     });
                 } catch (error) {
-                    res.status(500).send(error);
+                    res.status(400).send(error);
                 }
             }
             else return res.status(400).send({message: "Api hit tidak cukup"});
@@ -125,13 +125,13 @@ router.get("/city_walk", async function(req,res){
                                 });
                             });
                             if(hasil.length>0)res.status(200).send(hasil);
-                            else res.status(400).send({Message:"City Walk tidak ditemukan"});
+                            else res.status(404).send({Message:"City Walk tidak ditemukan"});
                         } catch (error) {
                             res.status(400).send({Message:"City Walk tidak ditemukan"});
                         }
                     });
                 } catch (error) {
-                    res.status(500).send(error);
+                    res.status(400).send(error);
                 }
             }
             else return res.status(400).send({message: "Api hit tidak cukup"});
@@ -260,10 +260,10 @@ router.get("/tour/:id", async function(req,res){
                             });
                         });
                         if(hasil.length>0)res.status(200).send(hasil);
-                        else res.status(400).send({Message:"Tour tidak ditemukan"});
+                        else res.status(404).send({Message:"Tour tidak ditemukan"});
                     });
                 } catch (error) {
-                    res.status(500).send(error);
+                    res.status(400).send(error);
                 }
             }
             else return res.status(400).send({message: "Api hit tidak cukup"});
@@ -302,7 +302,7 @@ router.post("/review", async function(req,res){
                 }
                 else return res.status(400).send({message: "Api hit tidak cukup"});
             }
-            else return res.status(400).send({message: "Endpoint ini hanya untuk premium user"});
+            else return res.status(403).send({message: "Endpoint ini hanya untuk premium user"});
         }
         else return res.status(400).send({message: "User tidak ditemukan"});
     }
@@ -380,7 +380,7 @@ router.get("/review/:id", async function(req,res){
             }
             else return res.status(400).send({message: "Api hit tidak cukup"});
         }
-        else return res.status(400).send({message: "Endpoint ini hanya untuk premium user"});
+        else return res.status(403).send({message: "Endpoint ini hanya untuk premium user"});
     }
     else return res.status(400).send({message: "User tidak ditemukan"});
 });
@@ -461,7 +461,7 @@ router.post("/subscribe", async function(req,res){
                 }
                 else return res.status(400).send({message: "Saldo tidak cukup"});
             }
-            else return res.status(400).send({message: "Akun sudah premium"});
+            else return res.status(403).send({message: "Akun sudah premium"});
         }
         else return res.status(400).send({message: "Email atau Password salah"});
     }
