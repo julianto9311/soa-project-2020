@@ -160,46 +160,49 @@ router.get("/tour", async function(req,res){
         let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
         conn.release();
         if(cek.length > 0){
-            if(kegiatan){
-                params = {
-                    account: process.env.JULI_TRIPOSO_ACCID,
-                    token: process.env.JULI_TRIPOSO_TOKEN,
-                    fields: 'id,name',
-                    order_by: '-score',
-                    location_ids: kota,
-                    tag_labels: kegiatan
+            if(parseInt(cek[0].api_hit) - 1 >= 0){
+                if(kegiatan){
+                    params = {
+                        account: process.env.JULI_TRIPOSO_ACCID,
+                        token: process.env.JULI_TRIPOSO_TOKEN,
+                        fields: 'id,name',
+                        order_by: '-score',
+                        location_ids: kota,
+                        tag_labels: kegiatan
+                    };
+                }
+                else{
+                    params = {
+                        account: process.env.JULI_TRIPOSO_ACCID,
+                        token: process.env.JULI_TRIPOSO_TOKEN,
+                        fields: 'id,name',
+                        order_by: '-score',
+                        location_ids: kota
+                    };
+                }
+                let options = {
+                    url:'https://www.triposo.com/api/20200405/tour.json',
+                    method: 'GET',
+                    qs:params
                 };
-            }
-            else{
-                params = {
-                    account: process.env.JULI_TRIPOSO_ACCID,
-                    token: process.env.JULI_TRIPOSO_TOKEN,
-                    fields: 'id,name',
-                    order_by: '-score',
-                    location_ids: kota
-                };
-            }
-            let options = {
-                url:'https://www.triposo.com/api/20200405/tour.json',
-                method: 'GET',
-                qs:params
-            };
-            try {
-                request(options, function (error, response) {
-                    let temp = JSON.parse(response.body);
-                    let hasil = [];
-                    temp.results.forEach(element => {
-                        hasil.push({
-                            ID_Tour: element.id,
-                            Nama_Tour: element.name
+                try {
+                    request(options, function (error, response) {
+                        let temp = JSON.parse(response.body);
+                        let hasil = [];
+                        temp.results.forEach(element => {
+                            hasil.push({
+                                ID_Tour: element.id,
+                                Nama_Tour: element.name
+                            });
                         });
+                        if(hasil.length>0)res.status(200).send(hasil);
+                        else res.status(400).send({Message:"Tour tidak ditemukan"});
                     });
-                    if(hasil.length>0)res.status(200).send(hasil);
-                    else res.status(400).send({Message:"Tour tidak ditemukan"});
-                });
-            } catch (error) {
-                res.status(500).send(error);
+                } catch (error) {
+                    res.status(500).send(error);
+                }
             }
+            else return res.status(400).send({message: "Api hit tidak cukup"});
         }
         else return res.status(400).send({message: "User tidak ditemukan"});
     }
@@ -222,39 +225,42 @@ router.get("/tour/:id", async function(req,res){
         let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
         conn.release();
         if(cek.length > 0){
-            let params = {
-                account: process.env.JULI_TRIPOSO_ACCID,
-                token: process.env.JULI_TRIPOSO_TOKEN,
-                fields: 'name,price,vendor_tour_url,intro,price_is_per_person',
-                order_by: '-score',
-                id: id
-            };
-            let options = {
-                url:'https://www.triposo.com/api/20200405/tour.json',
-                method: 'GET',
-                qs:params
-            };
-            try {
-                request(options, function (error, response) {
-                    let temp = JSON.parse(response.body);
-                    let hasil = [];
-                    temp.results.forEach(element => {
-                        let orang = element.price_is_per_person == true ? "Ya" : "Tidak";
-                        hasil.push({
-                            Nama_Tour: element.name,
-                            // Harga: element.price.currency + " " + element.price.amount,
-                            Harga: "Rp. " + numeral(parseInt(element.price.amount) * 16260).format('0,0'),
-                            Harga_Per_Orang: orang,
-                            URL: element.vendor_tour_url,
-                            Deskripsi: element.intro,
+            if(parseInt(cek[0].api_hit) - 1 >= 0){
+                let params = {
+                    account: process.env.JULI_TRIPOSO_ACCID,
+                    token: process.env.JULI_TRIPOSO_TOKEN,
+                    fields: 'name,price,vendor_tour_url,intro,price_is_per_person',
+                    order_by: '-score',
+                    id: id
+                };
+                let options = {
+                    url:'https://www.triposo.com/api/20200405/tour.json',
+                    method: 'GET',
+                    qs:params
+                };
+                try {
+                    request(options, function (error, response) {
+                        let temp = JSON.parse(response.body);
+                        let hasil = [];
+                        temp.results.forEach(element => {
+                            let orang = element.price_is_per_person == true ? "Ya" : "Tidak";
+                            hasil.push({
+                                Nama_Tour: element.name,
+                                // Harga: element.price.currency + " " + element.price.amount,
+                                Harga: "Rp. " + numeral(parseInt(element.price.amount) * 16260).format('0,0'),
+                                Harga_Per_Orang: orang,
+                                URL: element.vendor_tour_url,
+                                Deskripsi: element.intro,
+                            });
                         });
+                        if(hasil.length>0)res.status(200).send(hasil);
+                        else res.status(404).send({Message:"Tour tidak ditemukan"});
                     });
-                    if(hasil.length>0)res.status(200).send(hasil);
-                    else res.status(404).send({Message:"Tour tidak ditemukan"});
-                });
-            } catch (error) {
-                res.status(400).send(error);
+                } catch (error) {
+                    res.status(400).send(error);
+                }
             }
+            else return res.status(400).send({message: "Api hit tidak cukup"});
         }
         else return res.status(400).send({message: "User tidak ditemukan"});
     }
@@ -309,24 +315,21 @@ router.get("/review", async function(req,res){
     const conn = await db.getConnection();
     let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
     if(cek.length > 0){
-        if(parseInt(cek[0].api_hit) - 1 >= 0){
-            let api_hit = parseInt(cek[0].api_hit) - 1;
-            let update = await db.executeQuery(conn,`update user set api_hit = ${api_hit} where email = '${user.email}'`);
-            let tampil = await db.executeQuery(conn,`select * from review`);
-            conn.release();
-            let hasil = [];
-            tampil.forEach(e => {
-                hasil.push({
-                    Email_Reviewer: e.email,
-                    Nama_Jenis: e.nama_jenis,
-                    Jenis: e.jenis,
-                    Comment: e.comment,
-                    Rating: e.rating
-                });
+        let api_hit = parseInt(cek[0].api_hit) - 1;
+        let update = await db.executeQuery(conn,`update user set api_hit = ${api_hit} where email = '${user.email}'`);
+        let tampil = await db.executeQuery(conn,`select * from review`);
+        conn.release();
+        let hasil = [];
+        tampil.forEach(e => {
+            hasil.push({
+                Email_Reviewer: e.email,
+                Nama_Jenis: e.nama_jenis,
+                Jenis: e.jenis,
+                Comment: e.comment,
+                Rating: e.rating
             });
-            return res.status(200).send(hasil);
-        }
-        else return res.status(400).send({message: "Api hit tidak cukup"});    
+        });
+        return res.status(200).send(hasil);   
     }
     else return res.status(400).send({message: "User tidak ditemukan"});
 });
@@ -346,27 +349,24 @@ router.get("/review/:id", async function(req,res){
     let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
     if(cek.length > 0){
         if(user.tipe_user>0){
-            if(parseInt(cek[0].api_hit) - 1 >= 0){
-                let api_hit = parseInt(cek[0].api_hit) - 1;
-                let update = await db.executeQuery(conn,`update user set api_hit = ${api_hit} where email = '${user.email}'`);
-                let tampil = await db.executeQuery(conn,`select * from review where id_jenis = '${tour}'`);
-                conn.release();
-                let temp = [];
-                tampil.forEach(e => {
-                    temp.push({
-                        Email_Reviewer: e.email,
-                        Jenis: e.jenis,
-                        Comment: e.comment,
-                        Rating: e.rating
-                    });
+            let api_hit = parseInt(cek[0].api_hit) - 1;
+            let update = await db.executeQuery(conn,`update user set api_hit = ${api_hit} where email = '${user.email}'`);
+            let tampil = await db.executeQuery(conn,`select * from review where id_jenis = '${tour}'`);
+            conn.release();
+            let temp = [];
+            tampil.forEach(e => {
+                temp.push({
+                    Email_Reviewer: e.email,
+                    Jenis: e.jenis,
+                    Comment: e.comment,
+                    Rating: e.rating
                 });
-                let hasil = {
-                    Nama_Jenis: tampil[0].nama_jenis,
-                    Comment: temp
-                }
-                return res.status(200).send(hasil);
+            });
+            let hasil = {
+                Nama_Jenis: tampil[0].nama_jenis,
+                Comment: temp
             }
-            else return res.status(400).send({message: "Api hit tidak cukup"});
+            return res.status(200).send(hasil);
         }
         else return res.status(403).send({message: "Endpoint ini hanya untuk premium user"});
     }
