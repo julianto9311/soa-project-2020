@@ -31,11 +31,11 @@ router.get("/api/getRestaurant", async function(req, res){
         let token = req.query.token;
         let user;
 
-        if(!token)return res.status(401).send("Token not found");
+        if(!token)return res.status(401).send({message: "Token not found"});
         try{
             user = jwt.verify(token,"proyek_uas");
         }catch(err){
-            return res.status(401).send("Token Invalid");
+            return res.status(401).send({message: "Token Invalid"});
         }
 
         const conn = await db.getConnection();
@@ -56,7 +56,7 @@ router.get("/api/getRestaurant", async function(req, res){
             });
             res.status(200).send(cetak);
         }
-        else res.status(400).send("API HIT HABIS!!!");
+        else res.status(400).send({message: "API HIT HABIS!!!"});
 
         
     //     res.status(200).send({
@@ -96,11 +96,11 @@ router.get("/api/getSimilarPlace", async function(req, res){
         let token = req.query.token;
         let user;
 
-        if(!token)return res.status(401).send("Token not found");
+        if(!token)return res.status(401).send({message: "Token not found"});
         try{
             user = jwt.verify(token,"proyek_uas");
         }catch(err){
-            return res.status(401).send("Token Invalid");
+            return res.status(401).send({message: "Token Invalid"});
         }
 
         const conn = await db.getConnection();
@@ -121,7 +121,7 @@ router.get("/api/getSimilarPlace", async function(req, res){
             });
             res.status(200).send(cetak);
         }
-        else res.status(400).send("API HIT HABIS!!!");
+        else res.status(400).send({message: "API HIT HABIS!!!"});
 
         
 
@@ -153,11 +153,11 @@ router.get("/api/getFoodDrink", async function(req, res){
     let token = req.query.token;
     let user;
 
-    if(!token)return res.status(401).send("Token not found");
+    if(!token)return res.status(401).send({message: "Token not found"});
     try{
         user = jwt.verify(token,"proyek_uas");
     }catch(err){
-        return res.status(401).send("Token Invalid");
+        return res.status(401).send({message: "Token Invalid"});
     }
 
     const conn = await db.getConnection();
@@ -185,7 +185,7 @@ router.get("/api/getFoodDrink", async function(req, res){
             Restaurant: cetak
         });
     }
-    else res.status(400).send("API HIT HABIS!!!");
+    else res.status(400).send({message: "API HIT HABIS!!!"});
 });
 
 //=====================================================================================================================
@@ -194,11 +194,11 @@ router.get("/api/getDiving", async function(req, res){
     let token = req.query.token;
     let user;
 
-    if(!token)return res.status(401).send("Token not found");
+    if(!token)return res.status(401).send({message: "Token not found"});
     try{
         user = jwt.verify(token,"proyek_uas");
     }catch(err){
-        return res.status(401).send("Token Invalid");
+        return res.status(401).send({message: "Token Invalid"});
     }
 
     const conn = await db.getConnection();
@@ -223,7 +223,7 @@ router.get("/api/getDiving", async function(req, res){
             Diving: cetak
         });
     }
-    else res.status(400).send("API HIT HABIS!!!");
+    else res.status(400).send({message: "API HIT HABIS!!!"});
 });
 
 //=====================================================================================================================
@@ -234,11 +234,11 @@ router.delete("/reviewTour", async function(req, res){
     let id_review = req.body.id_review;
     let user;
 
-    if(!token)return res.status(401).send("Token not found");
+    if(!token)return res.status(401).send({message: "Token not found"});
     try{
         user = jwt.verify(token,"proyek_uas");
     }catch(err){
-        return res.status(401).send("Token Invalid");
+        return res.status(401).send({message: "Token Invalid"});
     }
 
     const conn = await db.getConnection();
@@ -256,11 +256,11 @@ router.delete("/reviewTour", async function(req, res){
                     "message" : "Success Delete Review"
                 });
             }
-            else return res.status(403).send("NOT YOUR REVIEW!!!!");
+            else return res.status(403).send({message:"NOT YOUR REVIEW!!!!"});
         }
-        else return res.status(404).send("id_review NOT FOUND");
+        else return res.status(404).send({message:"id_review NOT FOUND"});
     }
-    else return res.status(403).send("User Not Premium!!!");
+    else return res.status(403).send({message:"User Not Premium!!!"});
 });
 
 module.exports = router;

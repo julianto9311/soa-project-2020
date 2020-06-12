@@ -13,11 +13,11 @@ router.get("/article", async function(req,res){
     let token = req.query.token;
     let user;
 
-    if(!token)return res.status(401).send("Token not found");
+    if(!token)return res.status(401).send({"message":"Token not found"});
     try{
         user = jwt.verify(token,"proyek_uas");
     }catch(err){
-        return res.status(401).send("Token Invalid");
+        return res.status(401).send({message: "Token Invalid"});
     }
     if(kota=="")return res.status(400).send({message: "Field ada yang kosong"});
     else{
@@ -53,7 +53,7 @@ router.get("/article", async function(req,res){
                             });
                         });
                         if(hasil.length>0)res.status(200).send(hasil);
-                        else res.status(404).send({Message:"Perayaan tidak ditemukan"});
+                        else res.status(404).send({message:"Perayaan tidak ditemukan"});
                     });
                 } catch (error) {
                     res.status(400).send(error);
@@ -72,11 +72,11 @@ router.get("/city_walk", async function(req,res){
     let token = req.query.token;
     let user;
 
-    if(!token)return res.status(401).send("Token not found");
+    if(!token)return res.status(401).send({"message":"Token not found"});
     try{
         user = jwt.verify(token,"proyek_uas");
     }catch(err){
-        return res.status(401).send("Token Invalid");
+        return res.status(401).send({message: "Token Invalid"});
     }
     if(kota==""||waktu=="")return res.status(400).send({message: "Field ada yang kosong"});
     else{
@@ -125,9 +125,9 @@ router.get("/city_walk", async function(req,res){
                                 });
                             });
                             if(hasil.length>0)res.status(200).send(hasil);
-                            else res.status(404).send({Message:"City Walk tidak ditemukan"});
+                            else res.status(404).send({message:"City Walk tidak ditemukan"});
                         } catch (error) {
-                            res.status(400).send({Message:"City Walk tidak ditemukan"});
+                            res.status(400).send({message:"City Walk tidak ditemukan"});
                         }
                     });
                 } catch (error) {
@@ -148,11 +148,11 @@ router.get("/tour", async function(req,res){
     let token = req.query.token;
     let user;
 
-    if(!token)return res.status(401).send("Token not found");
+    if(!token)return res.status(401).send({"message":"Token not found"});
     try{
         user = jwt.verify(token,"proyek_uas");
     }catch(err){
-        return res.status(401).send("Token Invalid");
+        return res.status(401).send({message: "Token Invalid"});
     }
     if(kota==""||kegiatan=="")return res.status(400).send({message: "Field ada yang kosong"});
     else{
@@ -196,7 +196,7 @@ router.get("/tour", async function(req,res){
                             });
                         });
                         if(hasil.length>0)res.status(200).send(hasil);
-                        else res.status(400).send({Message:"Tour tidak ditemukan"});
+                        else res.status(400).send({message:"Tour tidak ditemukan"});
                     });
                 } catch (error) {
                     res.status(500).send(error);
@@ -213,11 +213,11 @@ router.get("/tour/:id", async function(req,res){
     let token = req.query.token;
     let user;
 
-    if(!token)return res.status(401).send("Token not found");
+    if(!token)return res.status(401).send({"message":"Token not found"});
     try{
         user = jwt.verify(token,"proyek_uas");
     }catch(err){
-        return res.status(401).send("Token Invalid");
+        return res.status(401).send({message: "Token Invalid"});
     }
     if(id=="")return res.status(400).send({message: "Field ada yang kosong"});
     else{
@@ -254,7 +254,7 @@ router.get("/tour/:id", async function(req,res){
                             });
                         });
                         if(hasil.length>0)res.status(200).send(hasil);
-                        else res.status(404).send({Message:"Tour tidak ditemukan"});
+                        else res.status(404).send({message:"Tour tidak ditemukan"});
                     });
                 } catch (error) {
                     res.status(400).send(error);
@@ -275,11 +275,11 @@ router.post("/review", async function(req,res){
     let rating = req.body.rating;
     let user;
 
-    if(!token)return res.status(401).send("Token not found");
+    if(!token)return res.status(401).send({"message":"Token not found"});
     try{
         user = jwt.verify(token,"proyek_uas");
     }catch(err){
-        return res.status(401).send("Token Invalid");
+        return res.status(401).send({message: "Token Invalid"});
     }
     if(id_jenis==""||nama_jenis==""||jenis==""||comment==""||rating=="")return res.status(400).send({message: "Field ada yang kosong"});
     else{
@@ -306,11 +306,11 @@ router.get("/review", async function(req,res){
     let token = req.query.token;
     let user;
 
-    if(!token)return res.status(401).send("Token not found");
+    if(!token)return res.status(401).send({"message":"Token not found"});
     try{
         user = jwt.verify(token,"proyek_uas");
     }catch(err){
-        return res.status(401).send("Token Invalid");
+        return res.status(401).send({message: "Token Invalid"});
     }
     const conn = await db.getConnection();
     let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
@@ -339,11 +339,11 @@ router.get("/review/:id", async function(req,res){
     let token = req.query.token;
     let user;
 
-    if(!token)return res.status(401).send("Token not found");
+    if(!token)return res.status(401).send({"message":"Token not found"});
     try{
         user = jwt.verify(token,"proyek_uas");
     }catch(err){
-        return res.status(401).send("Token Invalid");
+        return res.status(401).send({message: "Token Invalid"});
     }
     const conn = await db.getConnection();
     let cek = await db.executeQuery(conn,`select * from user where email = '${user.email}'`);
